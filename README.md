@@ -1,16 +1,4 @@
-# flutter_scqckypw
-
-A new Flutter application.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+# 四川汽车票务APP
+网址：https://www.scqckypw.com/
+解析html，没有现成接口
+方便买票，从这个网站买票没有三块钱的服务费，但是这个网站没有适配手机端，也没有APP
