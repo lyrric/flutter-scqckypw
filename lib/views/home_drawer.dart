@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/data/data.dart';
 
 ///首页侧边栏
 class HomeDrawerWidget extends StatelessWidget{
@@ -10,7 +11,7 @@ class HomeDrawerWidget extends StatelessWidget{
     return  new ListView(
       padding: const EdgeInsets.only(),
       children: <Widget>[
-        new _HomeDrawerHeaderWidget(),
+        new _UserDrawerHeader(),
         new ClipRect(
           child: new ListTile(
             leading: new CircleAvatar(child: new Text('A'), ),
@@ -43,24 +44,49 @@ class HomeDrawerWidget extends StatelessWidget{
     );
   }
 }
-///头像、个人资料
-class _HomeDrawerHeaderWidget extends StatefulWidget{
-
-  @override
-  State createState() {
-    return new _HomeDrawerHeaderState();
-  }
-}
-class _HomeDrawerHeaderState extends State<_HomeDrawerHeaderWidget>{
+class _UserDrawerHeader extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return new UserAccountsDrawerHeader(
-        accountName: new Text('未登录', ),
-        currentAccountPicture: new CircleAvatar(
-          backgroundImage: new AssetImage("images/user_default_avatar.jpg"),
-        ),
-        accountEmail: new Text("186082837**")
+    return new DrawerHeader(
+      padding: EdgeInsets.zero,
+      child: new Stack(
+        children: <Widget>[
+          new Image.asset("images/user_header_bg.jpg", fit: BoxFit.fill, width: double.infinity,),
+          new Align(
+            alignment: FractionalOffset.bottomLeft,
+            child: new Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                new CircleAvatar(
+                  backgroundImage: AssetImage("images/user_default_avatar.jpg"),
+                  radius: 35.0,
+                ),
+                new Container(
+                  height: 70,
+                  margin: EdgeInsets.only(left: 12.0, bottom: 12.0),
+                  child: new Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Text(Data.getUser().username, style: new TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.white),),
+                      new Text(Data.getUser().phone, style: new TextStyle(
+                          fontSize: 14.0, color: Colors.white),),
+                      new Text(Data.getUser().email, style: new TextStyle(
+                          fontSize: 14.0, color: Colors.white),),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
