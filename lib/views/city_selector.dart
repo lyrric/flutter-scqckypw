@@ -66,28 +66,6 @@ class _CityListItem extends StatelessWidget{
   }
   //可选择的城市
   Widget selectableWidget(){
-//      return new Container(
-//        decoration: new BoxDecoration(color:Colors.white),
-//        child: new Row(
-//          mainAxisAlignment: MainAxisAlignment.center,
-//          crossAxisAlignment: CrossAxisAlignment.start,
-//          children: <Widget>[
-//            new MaterialButton(
-//              textColor: Colors.black,
-//              minWidth: 350,
-//              height: 30,
-//              child: new Container(
-//                alignment: Alignment.centerLeft,
-//                child: Text(_cityModel.name),
-//              ),
-//              onPressed: ()=>{
-//
-//              },
-//            ),
-//            Divider(height: 5, ),
-//          ],
-//        ),
-//      );
     return Container(
       decoration: new BoxDecoration(color:Colors.white),
       child: new Column(
@@ -98,7 +76,7 @@ class _CityListItem extends StatelessWidget{
               contentPadding: EdgeInsets.only(left: 10, top: 0,bottom: 0),
               title: new Text(_cityModel.name, style: new TextStyle(fontSize: 16)),
               onTap: (){
-                Navigator.pop(_context, _cityModel.name);
+                Navigator.pop(_context, _cityModel);
               },
             ),
           ),

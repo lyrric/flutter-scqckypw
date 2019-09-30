@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_scqckypw/model/city_model.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -75,9 +76,9 @@ class _Body extends StatefulWidget{
 class _BodyState extends State<_Body>{
 
   //发车城市
-  String _fromCity = '成都';
+  CityModel _fromCity = CityModel.of(255,'成都');
   //目标城市
-  String _targetCity = '宜宾';
+  CityModel _targetCity = CityModel.of(325,'宜宾');
   //处罚日期
   DateTime _date = DateTime.now();
 
@@ -106,15 +107,15 @@ class _BodyState extends State<_Body>{
                     child:  new Column(
                       children: <Widget>[
                         new FlatButton(
-                          child: new Text(_fromCity, style: new TextStyle(fontSize: 24),),
+                          child: new Text(_fromCity.name, style: new TextStyle(fontSize: 24),),
                           onPressed: () {
                             Navigator.of(_topContext).push(new MaterialPageRoute(builder:
                                 (_){ return new CitySelector();}
                             )
-                            ).then((cityName){
-                              if(cityName != null) {
+                            ).then((city){
+                              if(city != null) {
                                 super.setState((){
-                                  _fromCity = cityName;
+                                  _fromCity = city;
                                 });
                               }
                             });
@@ -128,7 +129,7 @@ class _BodyState extends State<_Body>{
                     margin: EdgeInsets.only(left: 40, right: 50),
                     child: new IconButton(icon: new Icon(Icons.sync), onPressed: (){
                       super.setState((){
-                        String temp = _fromCity;
+                        CityModel temp = _fromCity;
                         _fromCity = _targetCity;
                         _targetCity = temp;
                       });
@@ -139,15 +140,15 @@ class _BodyState extends State<_Body>{
                     child:  new Column(
                       children: <Widget>[
                         new FlatButton(
-                          child: new Text(_targetCity, style: new TextStyle(fontSize: 24),),
+                          child: new Text(_targetCity.name, style: new TextStyle(fontSize: 24),),
                           onPressed: () {
                             Navigator.of(_topContext).push(new MaterialPageRoute(builder:
                                 (_){ return new CitySelector();}
                             )
-                            ).then((cityName){
-                              if(cityName != null) {
+                            ).then((city){
+                              if(city != null) {
                                 super.setState((){
-                                  _targetCity = cityName;
+                                  _targetCity = city;
                                 });
                               }
                             });

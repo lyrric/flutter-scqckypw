@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/model/city_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
+import 'package:flutter_scqckypw/service/ticket_service.dart';
 
 class TicketListView extends StatefulWidget {
   //发车城市
-  String _fromCity;
+  CityModel _fromCity;
   //目标城市
-  String _targetCity;
+  CityModel _targetCity;
   //处罚日期
   String _date;
 
@@ -20,41 +22,48 @@ class TicketListView extends StatefulWidget {
 
 class TicketListState extends State<TicketListView> {
   //发车城市
-  String _fromCity;
+  CityModel _fromCity;
   //目标城市
-  String _targetCity;
+  CityModel _targetCity;
   //处罚日期
   String _date;
 
-  List<TickerMode> tickets;
+  List<TicketModel> _tickets;
 
-  TicketListState(this._fromCity, this._targetCity, this._date);
+  TicketListState(this._fromCity, this._targetCity, this._date){
+    TicketService ticketService = new TicketService();
+    ticketService.getTickets(_fromCity, _targetCity, _date).then((data){
+      super.setState((){
+        _tickets =  data;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    TicketModel ticketModel = new TicketModel();
-    ticketModel.price = '100元';
-    ticketModel.fromStation = '成都';
-    ticketModel.targetStation = '宜宾';
-    ticketModel.departureTime = '2019-10-01 07:40';
-    ticketModel.mileage = '296公里';
-    ticketModel.halfwayStation = '宜宾';
-    ticketModel.ticketType = '固定班';
-    ticketModel.remainderTicketNum = 10;
-    ticketModel.remainderChildTicketNum = 5;
-    ticketModel.vehicleType = '中型高二';
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('$_fromCity - $_targetCity'),
+        title: new Text('${_fromCity.name} - ${_targetCity.name}'),
         centerTitle: true,
       ),
-      body: ListView(
-        children: <Widget>[
-          new ListItem(ticketModel),
-          new ListItem(ticketModel),
-        ],
-      ),
+      body: _getBody()
     );
+  }
+  Widget _getBody(){
+    if(_tickets == null){
+      //加载中
+      return new Text('加载中');
+    }else if(_tickets.length == 0){
+      //暂无数据
+      return new Text('暂无数据');
+    }else{
+      List<Widget> list = new List();
+      for(TicketModel ticket in _tickets){
+        list.add(new ListItem(ticket));
+      }return ListView(
+        children: list
+      );
+    }
   }
 }
 
@@ -100,7 +109,7 @@ class ListItem extends StatelessWidget {
                                 children: <Widget>[
                                   new Text('途经：${_ticket.halfwayStation}',style: new TextStyle(fontSize: 10)),
                                   new Image.asset("images/arrow_right.png", width: 80, height: 10,),
-                                  new Text('里程：${_ticket.mileage}',style: new TextStyle(fontSize: 10)),
+                                  new Text('里程：${_ticket.mileage}公里',style: new TextStyle(fontSize: 10)),
                                 ],
                               ),
                             ),
@@ -108,7 +117,7 @@ class ListItem extends StatelessWidget {
                           ],
                         ),
                       ),
-                      new Text(_ticket.price,style: new TextStyle(fontSize: 20)),
+                      new Text('${_ticket.price}元',style: new TextStyle(fontSize: 20)),
                     ],
                   ),
                 ),

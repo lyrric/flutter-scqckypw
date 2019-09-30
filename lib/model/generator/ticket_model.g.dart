@@ -8,28 +8,32 @@ part of '../ticket_model.dart';
 
 TicketModel _$TicketModelFromJson(Map<String, dynamic> json) {
   return TicketModel()
-    ..fromStation = json['fromStation'] as String
-    ..halfwayStation = json['halfwayStation'] as String
-    ..targetStation = json['targetStation'] as String
-    ..departureTime = json['departureTime'] as String
-    ..mileage = json['mileage'] as String
-    ..vehicleType = json['vehicleType'] as String
-    ..ticketType = json['ticketType'] as String
-    ..price = json['price'] as String
-    ..remainderTicketNum = json['remainderTicketNum'] as int
-    ..remainderChildTicketNum = json['remainderChildTicketNum'] as int;
+    ..fromStation = json['CarryStaName'] as String
+    ..halfwayStation = json['StopName'] as String
+    ..targetStation = json['EndStaName'] as String
+    ..departureTime = json['DrvDateTime'] as String
+    ..mileage = json['Mile'] as int
+    ..vehicleType = json['BusTypeName'] as String
+    ..ticketType = json['SchTypeName'] as String
+    ..price = (json['FullPrice'] as num)?.toDouble()
+    ..remainderTicketNum = json['SAmount'] as int
+    ..remainderChildTicketNum = json['ChildSAmount'] as int
+    ..carryStaId = json['carry_sta_id'] as String
+    ..signId = json['sign_id'] as String;
 }
 
 Map<String, dynamic> _$TicketModelToJson(TicketModel instance) =>
     <String, dynamic>{
-      'fromStation': instance.fromStation,
-      'halfwayStation': instance.halfwayStation,
-      'targetStation': instance.targetStation,
-      'departureTime': instance.departureTime,
-      'mileage': instance.mileage,
-      'vehicleType': instance.vehicleType,
-      'ticketType': instance.ticketType,
-      'price': instance.price,
-      'remainderTicketNum': instance.remainderTicketNum,
-      'remainderChildTicketNum': instance.remainderChildTicketNum,
+      'CarryStaName': instance.fromStation,
+      'StopName': instance.halfwayStation,
+      'EndStaName': instance.targetStation,
+      'DrvDateTime': instance.departureTime,
+      'Mile': instance.mileage,
+      'BusTypeName': instance.vehicleType,
+      'SchTypeName': instance.ticketType,
+      'FullPrice': instance.price,
+      'SAmount': instance.remainderTicketNum,
+      'ChildSAmount': instance.remainderChildTicketNum,
+      'carry_sta_id': instance.carryStaId,
+      'sign_id': instance.signId,
     };

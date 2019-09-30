@@ -15,6 +15,12 @@ class CityModel{
   //是否是标题，如果是则不能选择
   bool isTitle;
 
+  factory CityModel.of(int id, String name){
+      return CityModel()
+      ..id = id
+      ..name = name;
+  }
+
   CityModel();
 
   factory CityModel.fromJson(Map<String, dynamic> map)=>_$CityModelFromJson(map);
