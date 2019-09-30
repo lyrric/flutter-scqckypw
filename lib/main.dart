@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_scqckypw/views/ticket_list.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,6 +13,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '四川汽车票务网',
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale.fromSubtags(languageCode: 'zh'),
+        const Locale.fromSubtags(languageCode: 'en'),
+      ],
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -35,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        centerTitle: true,
       ),
       drawer: new Drawer(
         child: new HomeDrawerWidget(),
@@ -45,117 +56,176 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class _Body extends StatelessWidget{
+class _Body extends StatefulWidget{
 
-  //发车城市
-  String _fromCity;
-  //目标城市
-  String _targetCity;
-  //开发日期
-  DateTime _date;
+
 
   BuildContext _topContext;
 
   _Body(this._topContext);
 
   @override
+  State createState() {
+    return new _BodyState(_topContext);
+  }
+
+
+}
+
+class _BodyState extends State<_Body>{
+
+  //发车城市
+  String _fromCity = '成都';
+  //目标城市
+  String _targetCity = '宜宾';
+  //处罚日期
+  DateTime _date = DateTime.now();
+
+  BuildContext _topContext;
+
+  _BodyState(this._topContext);
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
-      decoration:  new BoxDecoration(
-        color: Colors.white, // 底色
-      ),
-      child:  new Container(
-        margin: EdgeInsets.only(left: 20, top: 20, right: 20),
-        child:  Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                new Container(
-                  width: 120,
-                  child:  new Column(
-                    children: <Widget>[
-                      new FlatButton(
-                        child: new Text('成都', style: new TextStyle(fontSize: 24),),
-                        onPressed: () {
-                          Navigator.of(_topContext).push(new MaterialPageRoute(builder:
-                              (_){ return new CitySelector();}
-                              )
-                          ).then((cityName){
-                             if(cityName != null) {
-                               _fromCity = cityName;
-                             }
-                          });
-                        },
-                      ),
-                      Divider(height:20.0,indent:0.0,color: Colors.red,),
-                    ],
+        height: 200,
+        decoration:  new BoxDecoration(
+          color: Colors.white, // 底色
+        ),
+        child:  new Container(
+          margin: EdgeInsets.only(left: 20, top: 20, right: 20),
+          child:  Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  new Container(
+                    width: 100,
+                    child:  new Column(
+                      children: <Widget>[
+                        new FlatButton(
+                          child: new Text(_fromCity, style: new TextStyle(fontSize: 24),),
+                          onPressed: () {
+                            Navigator.of(_topContext).push(new MaterialPageRoute(builder:
+                                (_){ return new CitySelector();}
+                            )
+                            ).then((cityName){
+                              if(cityName != null) {
+                                super.setState((){
+                                  _fromCity = cityName;
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        Divider(height:10.0,indent:0.0,color: Colors.red,),
+                      ],
+                    ),
                   ),
-                ),
-                new Container(
-                  margin: EdgeInsets.only(left: 40, right: 50),
-                  child: new Icon(Icons.sync),
-                ),
-                new Container(
-                  width: 120,
-                  child:  new Column(
-                    children: <Widget>[
-                      new FlatButton(
-                        child: new Text('宜宾', style: new TextStyle(fontSize: 24),),
-                        onPressed: () {
-                          Navigator.of(_topContext).push(new MaterialPageRoute(builder:
-                              (_){ return new CitySelector();}
-                          )
-                          ).then((cityName){
-                            if(cityName != null) {
-                              _targetCity = cityName;
-                            }
-                          });
-                        },
-                      ),
-                      Divider(height:20.0,indent:0.0,color: Colors.red,),
-                    ],
+                  new Container(
+                    margin: EdgeInsets.only(left: 40, right: 50),
+                    child: new IconButton(icon: new Icon(Icons.sync), onPressed: (){
+                      super.setState((){
+                        String temp = _fromCity;
+                        _fromCity = _targetCity;
+                        _targetCity = temp;
+                      });
+                    }),
                   ),
-                ),
-              ],
-            ),
-            new Container(
-              margin: EdgeInsets.only(top: 0.0),
-              child: new FlatButton(
-                child: new Text('9月29日 星期五', style: new TextStyle(fontSize: 14),),
-                onPressed: () {
-                  showDatePicker(
+                  new Container(
+                    width: 100,
+                    child:  new Column(
+                      children: <Widget>[
+                        new FlatButton(
+                          child: new Text(_targetCity, style: new TextStyle(fontSize: 24),),
+                          onPressed: () {
+                            Navigator.of(_topContext).push(new MaterialPageRoute(builder:
+                                (_){ return new CitySelector();}
+                            )
+                            ).then((cityName){
+                              if(cityName != null) {
+                                super.setState((){
+                                  _targetCity = cityName;
+                                });
+                              }
+                            });
+                          },
+                        ),
+                        Divider(height:10.0,indent:0.0,color: Colors.red,),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              new Container(
+                margin: EdgeInsets.only(top: 0.0),
+                child: new FlatButton(
+                  child: new Text(_getShowDate(), style: new TextStyle(fontSize: 14),),
+                  onPressed: () {
+                    showDatePicker(
+                      locale: Locale.fromSubtags(languageCode: 'zh'),
                       context: context,
                       lastDate: DateTime.now().add(new Duration(days: 15)),
-                      firstDate: DateTime.now(),
-                      initialDate: DateTime.now()
-                  ).then((date)=>{
-                    _date = date
-                  });
-                },
+                      firstDate: _date,
+                      initialDate: _date
+                    ).then((date){
+                      if(date != null){
+                        setState(() {
+                          _date = date;
+                        });
+                      }
+                    });
+                  },
+                ),
               ),
-            ),
-            new Container(
-              alignment: Alignment.center,
-              child: MaterialButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                minWidth: 350,
-                child: Text('查询'),
-                onPressed: ()=>{
-
-                },
-              ),
-            )
-          ],
-        ),
-      )
+              new Container(
+                alignment: Alignment.center,
+                child: MaterialButton(
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  minWidth: 350,
+                  child: Text('查询'),
+                  onPressed: (){
+                    Navigator.of(_topContext).push(new MaterialPageRoute(builder: (_){
+                      return new TicketListView(_fromCity, _targetCity, _getDateString());
+                    }));
+                  },
+                ),
+              )
+            ],
+          ),
+        )
     );
   }
- String getDateString(){
+
+  //格式化时间2019-05-11
+  String _getDateString(){
     return '${_date.year}-${_date.month}-${_date.day}';
- }
+  }
+  //格式化时间，9月29日 星期五
+  String _getShowDate(){
+    int weekday = _date.weekday;
+    String weekStr;
+    switch(weekday){
+      case 1:
+        weekStr = '星期一';break;
+      case 2:
+        weekStr = '星期二';break;
+      case 3:
+        weekStr = '星期三';break;
+      case 4:
+        weekStr = '星期四';break;
+      case 5:
+        weekStr = '星期五';break;
+      case 6:
+        weekStr = '星期六';break;
+      case 7:
+        weekStr = '星期天';break;
+      default:
+        weekStr = '星期天';break;
+    }
+    return '${_date.month}月${_date.day}日 $weekStr';
+  }
 }

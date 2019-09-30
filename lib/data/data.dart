@@ -10,6 +10,7 @@ class Data{
   static List<CityModel>  _cityList;
   static UserModel _defaultUser = new UserModel("未登录", '-', '-', '-', '-', '-');
   static UserModel _user;
+  static String _cookie = "";
 
   ///获取城市列表
   static  List<CityModel> getCityList(){
@@ -40,7 +41,10 @@ class Data{
     }
     return _user;
   }
-
+  ///获取用户cookie
+  static String getCookie(){
+    return _cookie;
+  }
 }
 
 
