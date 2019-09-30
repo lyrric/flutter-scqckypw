@@ -98,11 +98,11 @@ class ListItem extends StatelessWidget {
                     children: <Widget>[
                       new Text(_getTime(), style: new TextStyle(fontSize: 20), ),
                       new Container(
-                        width: 200,
+                        width: 270,
                         child:  new Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
-                            new Text(_ticket.fromStation,style: new TextStyle(fontSize: 20)),
+                            new Text(_ticket.fromStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.fade,),
                             new Container(
                               child:  new Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -113,11 +113,11 @@ class ListItem extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            new Text(_ticket.targetStation,style: new TextStyle(fontSize: 20)),
+                            new Text(_ticket.targetStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.fade),
                           ],
                         ),
                       ),
-                      new Text('${_ticket.price}元',style: new TextStyle(fontSize: 20)),
+                      new Text('${_ticket.price}元',style: new TextStyle(fontSize: 15)),
                     ],
                   ),
                 ),
