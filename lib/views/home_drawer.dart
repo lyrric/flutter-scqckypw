@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data/data.dart';
+import 'package:flutter_scqckypw/views/login.dart';
 
 ///首页侧边栏
 class HomeDrawerWidget extends StatelessWidget{
@@ -16,7 +17,11 @@ class HomeDrawerWidget extends StatelessWidget{
           child: new ListTile(
             leading: new CircleAvatar(child: new Text('A'), ),
             title: new Text("我的信息"),
-            onTap: ()=>{},
+            onTap: (){
+              Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+                return new LoginView();
+              }));
+            },
           ),
         ),
         new ClipRect(
