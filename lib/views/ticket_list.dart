@@ -96,14 +96,23 @@ class ListItem extends StatelessWidget {
                   child: new Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
-                      new Text(_getTime(), style: new TextStyle(fontSize: 20), ),
                       new Container(
-                        width: 270,
+                        child: new Text(_getTime(), style: new TextStyle(fontSize: 20), ),
+                      ),
+                      new Container(
                         child:  new Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            new Text(_ticket.fromStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.fade,),
                             new Container(
+                              width: 100,
+                              padding: EdgeInsets.only(left: 10
+
+                              ),
+                              //decoration: new
+                              child: new Text(_ticket.fromStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
+                            ),
+                            new Container(
+                              width: 80,
                               child:  new Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
@@ -113,7 +122,12 @@ class ListItem extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            new Text(_ticket.targetStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.fade),
+                            new Container(
+                              //decoration: ne
+                              width: 100,
+                              padding: EdgeInsets.only(left: 10),
+                              child: new Text(_ticket.targetStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
+                            ),
                           ],
                         ),
                       ),
@@ -140,6 +154,7 @@ class ListItem extends StatelessWidget {
           ),
           new Container(
             decoration:  new BoxDecoration(
+              color: Color(0x12000000)
             ),
             height: 10,
           ),
