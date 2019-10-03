@@ -1,6 +1,11 @@
 
+import 'dart:math';
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/data/sys_constant.dart';
+import 'package:flutter_scqckypw/service/common_service.dart';
 
 class LoginView extends StatelessWidget{
 
@@ -28,7 +33,22 @@ class _FormView extends StatefulWidget{
 class _FormSate extends State<_FormView>{
 
   final _formKey = GlobalKey<_FormSate>();
+  CommonService commonService = new CommonService();
+  //验证码数据
+  Uint8List captureBytes;
 
+
+  _FormSate(){
+    initCapture();
+  }
+
+  void initCapture(){
+    commonService.getCapture().then((data){
+      setState(() {
+        captureBytes = data;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return new Form(
@@ -62,7 +82,16 @@ class _FormSate extends State<_FormView>{
                   ),
                 ),
               ),
-              Image.network("https://www.scqckypw.com/rCode.jpg?d=0.10689338593382991",width: 150),
+              new Container(
+                width: 150,
+                child: captureBytes==null?
+                new Text('加载中', style: new TextStyle(fontSize: 8),):
+                new FlatButton(
+                  child: Image.network(CAPTURE_URL+Random.secure().nextDouble().toString(),width: 150,height:50, fit: BoxFit.fill,),
+                  onPressed: (){
+                  initCapture();
+                },)
+              )
             ],
           ),
           new Container(

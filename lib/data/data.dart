@@ -45,6 +45,9 @@ class Data{
   static String getCookie(){
     return _cookie;
   }
+  static void setCookie(String cookie){
+    _cookie = cookie;
+  }
 }
 
 
