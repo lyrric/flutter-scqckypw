@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
+import 'package:flutter_scqckypw/model/target_city_model.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -143,18 +144,15 @@ class _BodyState extends State<_Body>{
                         new FlatButton(
                           child: new Text(_targetCity.name, style: new TextStyle(fontSize: 22),),
                           onPressed: () {
-                            showSearch(context: _topContext, delegate: new TargetCitySelector(_fromCity.id, this));
-                         /*   Navigator.of(_topContext).push(new MaterialPageRoute(builder:
-                                (_){ return new TargetCitySelector(_fromCity.id);}
-                            )
-                            ).then((city){
-                              if(city != null) {
-                                super.setState((){
-                                  _targetCity = city;
+                            showSearch(context: _topContext, delegate: new TargetCitySelector(_fromCity.id, this))
+                              .then((city){
+                                _targetCity = CityModel.of(city.id,city.name);
+                                setState(() {
+
                                 });
-                              }
-                            });*/
-                          },
+                            });
+                          }
+
                         ),
                         Divider(height:10.0,indent:0.0,color: Colors.red,),
                       ],
