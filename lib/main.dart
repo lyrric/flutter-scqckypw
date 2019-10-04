@@ -4,6 +4,7 @@ import 'package:flutter_scqckypw/model/city_model.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_scqckypw/views/target_city_selector_.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
 
 void main() => runApp(MyApp());
@@ -76,7 +77,7 @@ class _Body extends StatefulWidget{
 class _BodyState extends State<_Body>{
 
   //发车城市
-  CityModel _fromCity = CityModel.of(255,'成都');
+  CityModel _fromCity = CityModel.of(255,'成都市');
   //目标城市
   CityModel _targetCity = CityModel.of(325,'宜宾');
   //处罚日期
@@ -107,7 +108,7 @@ class _BodyState extends State<_Body>{
                     child:  new Column(
                       children: <Widget>[
                         new FlatButton(
-                          child: new Text(_fromCity.name, style: new TextStyle(fontSize: 24),),
+                          child: new Text(_fromCity.name, style: new TextStyle(fontSize: 22),),
                           onPressed: () {
                             Navigator.of(_topContext).push(new MaterialPageRoute(builder:
                                 (_){ return new CitySelector();}
@@ -140,10 +141,11 @@ class _BodyState extends State<_Body>{
                     child:  new Column(
                       children: <Widget>[
                         new FlatButton(
-                          child: new Text(_targetCity.name, style: new TextStyle(fontSize: 24),),
+                          child: new Text(_targetCity.name, style: new TextStyle(fontSize: 22),),
                           onPressed: () {
-                            Navigator.of(_topContext).push(new MaterialPageRoute(builder:
-                                (_){ return new CitySelector();}
+                            showSearch(context: _topContext, delegate: new TargetCitySelector(_fromCity.id, this));
+                         /*   Navigator.of(_topContext).push(new MaterialPageRoute(builder:
+                                (_){ return new TargetCitySelector(_fromCity.id);}
                             )
                             ).then((city){
                               if(city != null) {
@@ -151,7 +153,7 @@ class _BodyState extends State<_Body>{
                                   _targetCity = city;
                                 });
                               }
-                            });
+                            });*/
                           },
                         ),
                         Divider(height:10.0,indent:0.0,color: Colors.red,),
