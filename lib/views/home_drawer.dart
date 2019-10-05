@@ -20,7 +20,12 @@ class HomeDrawerWidget extends StatelessWidget{
             onTap: (){
               Navigator.of(context).push(new MaterialPageRoute(builder: (_){
                 return new LoginView();
-              }));
+              })).then((result){
+                if(result != null){
+                  //成功登陆,获取新的用户信
+
+                }
+              });
             },
           ),
         ),

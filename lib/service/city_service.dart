@@ -4,15 +4,15 @@ import 'package:dio/dio.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/target_city_model.dart';
+import 'package:flutter_scqckypw/service/base_service.dart';
 
 ///
-class CityService{
+class CityService extends BaseService{
 
-  Dio _dio = new Dio();
 
   //终点站搜索列表
  Future<List<TargetCityModel>> getTargetCityList(int formCityId, String key) async {
-    Response response = await _dio.get(TARGET_CITY_URL,
+    Response response = await dio.get(TARGET_CITY_URL,
       queryParameters: {
         'cid':formCityId,
         's':key,

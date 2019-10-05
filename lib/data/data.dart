@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_scqckypw/model/user_model.dart';
 import '../model/city_model.dart';
@@ -12,6 +13,7 @@ class Data{
   static UserModel _defaultUser = new UserModel("未登录", '-', '-', '-', '-', '-');
   static UserModel _user;
   static String _cookie = "";
+  static List<Cookie> cookies;
 
   ///获取城市列表
   static  List<CityModel> getCityList(){
@@ -33,7 +35,6 @@ class Data{
         }
       }
     }
-    var data = json.encode(_cityList);
     return _cityList;
   }
   ///获取用户数据

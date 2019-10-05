@@ -5,16 +5,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
+import 'package:flutter_scqckypw/service/base_service.dart';
 
 ///车票
-class TicketService{
+class TicketService extends BaseService{
 
-  Dio _dio = new Dio();
 
   //获取车次列表
   Future<List<TicketModel>> getTickets(CityModel from, CityModel target, String date) async {
     List<TicketModel> result = new List<TicketModel>();
-    Response<String> response = await _dio.get(BASE_URL+"/query/searchTicket.html",
+    Response<String> response = await dio.get(BASE_URL+"/query/searchTicket.html",
         queryParameters: {
           'cityId':from.id,
           'cityName':from.name,
