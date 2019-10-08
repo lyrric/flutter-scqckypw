@@ -9,3 +9,5 @@ const String TARGET_CITY_URL = BASE_URL + '/get/targetCitys.html';
 const String LOGIN_PAGE_URL = BASE_URL + '/login/index.html';
 ///登陆接口Url
 const String LOGIN_URL = BASE_URL + '/login/check.json';
+///用户基本信息接口Url
+const String USER_CENTER_URL = BASE_URL + '/user/get.html';

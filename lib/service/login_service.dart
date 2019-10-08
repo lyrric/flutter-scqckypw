@@ -12,7 +12,7 @@ class LoginService extends BaseService{
   Future<String> login(String username, String password, String captureCode) async {
     //获取登陆页面html内容，解析token值
     Response response = await dio.get(LOGIN_PAGE_URL,  options: new Options(
-        headers: { 'cookie':Data.getCookie(),},
+        headers: { 'cookie':Data.cookie,},
         responseType: ResponseType.plain
     ));
     String html = response.data;

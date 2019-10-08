@@ -19,7 +19,7 @@ class CityService extends BaseService{
         'city_name':'asd'
       },
       options: new Options(
-          headers: { 'cookie':Data.getCookie(),},
+          headers: { 'cookie':Data.cookie,},
           responseType: ResponseType.plain
       ),
     );

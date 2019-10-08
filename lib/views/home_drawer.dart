@@ -2,13 +2,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data/data.dart';
+import 'package:flutter_scqckypw/service/common_service.dart';
+import 'package:flutter_scqckypw/service/user_service.dart';
 import 'package:flutter_scqckypw/views/login.dart';
+import 'package:flutter_scqckypw/views/user_center.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 ///首页侧边栏
 class HomeDrawerWidget extends StatelessWidget{
 
+
+
   @override
   Widget build(BuildContext context) {
+
     return  new ListView(
       padding: const EdgeInsets.only(),
       children: <Widget>[
@@ -19,13 +26,8 @@ class HomeDrawerWidget extends StatelessWidget{
             title: new Text("我的信息"),
             onTap: (){
               Navigator.of(context).push(new MaterialPageRoute(builder: (_){
-                return new LoginView();
-              })).then((result){
-                if(result != null){
-                  //成功登陆,获取新的用户信
-
-                }
-              });
+                return new UserCenter();
+              }));
             },
           ),
         ),
@@ -54,10 +56,53 @@ class HomeDrawerWidget extends StatelessWidget{
     );
   }
 }
-class _UserDrawerHeader extends StatelessWidget{
+class _UserDrawerHeader extends StatefulWidget{
+
+  @override
+  State createState() {
+    return new _UserDrawerHeaderStat();
+  }
+}
+
+class _UserDrawerHeaderStat extends State<_UserDrawerHeader>{
+
+  UserService _userService = new UserService();
+
+  bool flag = false;
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(Duration(milliseconds: 200)).then((e) {
+      if(Data.cookie.isEmpty){
+        if(!flag){
+          flag = true;
+          Navigator.of(context).push(new MaterialPageRoute(builder:(_){
+            return new LoginView();
+          })).then((res){
+            if(res == null){
+              Fluttertoast.showToast(
+                  msg: '请先登陆',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIos: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: 16.0
+              ).then((_){
+                Navigator.of(context).pop(true);
+              });
+            }else{
+              _userService.getUser().then((_){
+                setState(() {
+
+                });
+              });
+            }
+          });
+        }
+
+      }
+    });
     return new DrawerHeader(
       padding: EdgeInsets.zero,
       child: new Stack(
@@ -81,14 +126,14 @@ class _UserDrawerHeader extends StatelessWidget{
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      new Text(Data.getUser().username, style: new TextStyle(
+                      new Text(Data.user.username, style: new TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.w400,
                           color: Colors.white),),
-                      new Text(Data.getUser().phone, style: new TextStyle(
+                      new Text(Data.user.email, style: new TextStyle(
                           fontSize: 14.0, color: Colors.white),),
-                      new Text(Data.getUser().email, style: new TextStyle(
-                          fontSize: 14.0, color: Colors.white),),
+//                      new Text(Data.user.phone, style: new TextStyle(
+//                          fontSize: 14.0, color: Colors.white),),
                     ],
                   ),
                 )

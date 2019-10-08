@@ -16,11 +16,10 @@ class CommonService extends BaseService{
     Response response = await dio.get(CAPTURE_URL,
         queryParameters: {'d':Random.secure().nextDouble()},
         options: new Options(
-          headers: { 'cookie':Data.getCookie(),},
+          headers: { 'cookie':Data.cookie,},
           responseType: ResponseType.bytes
         ),
     );
-
     List<int> data = response.data;
     Uint8List bytes = Uint8List.fromList(data);
     return bytes;

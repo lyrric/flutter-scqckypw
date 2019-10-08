@@ -17,8 +17,8 @@ class UserModel{
   String idType;
   //证件编号
   String idNo;
-  //证件编号
-  String cookie;
+  //性别
+  String sex;
 
   UserModel(this.username, this.phone, this.email, this.realName, this.idType,
       this.idNo);
