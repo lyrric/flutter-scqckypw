@@ -5,6 +5,7 @@ import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/service/common_service.dart';
 import 'package:flutter_scqckypw/service/user_service.dart';
 import 'package:flutter_scqckypw/views/login.dart';
+import 'package:flutter_scqckypw/views/passenger_mgr.dart';
 import 'package:flutter_scqckypw/views/user_center.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -35,21 +36,25 @@ class HomeDrawerWidget extends StatelessWidget{
           child: new ListTile(
             leading: new CircleAvatar(child: new Text('B'), ),
             title: new Text("我的订单"),
-            onTap: ()=>{},
+            onTap: (){},
           ),
         ),
         new ClipRect(
           child: new ListTile(
             leading: new CircleAvatar(child: new Text('C'), ),
             title: new Text("常用乘车人"),
-            onTap: ()=>{},
+            onTap: (){
+            Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+              return new PassengerMgrView();
+            }));
+            },
           ),
         ),
         new ClipRect(
           child: new ListTile(
             leading: new CircleAvatar(child: new Text('D'), ),
             title: new Text("关于我们"),
-            onTap: ()=>{},
+            onTap: (){},
           ),
         ),
       ],

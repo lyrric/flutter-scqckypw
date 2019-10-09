@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/data_util.dart';
 import 'package:flutter_scqckypw/service/user_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -67,14 +68,7 @@ class _BodyState extends State<_Body>{
       case '保密':
         _sex = 'S';break;
     }
-    switch(_idType){
-      case '身份证':
-        _idType = 'id_card';break;
-      case '军人证':
-        _idType = 'military_card';break;
-      case '护照':
-        _idType = 'passport';break;
-    }
+    _idType = convertIdTypeByText(_idType);
     _realNameCtrl = TextEditingController(text: _realName);
     _idNoCtrl  = TextEditingController(text: _idNo);
   }

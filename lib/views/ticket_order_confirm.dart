@@ -8,7 +8,7 @@ import 'package:flutter_scqckypw/views/ticket_list.dart';
 class TicketOrderConfirm extends StatefulWidget{
 
 
-  TicketModel _tickerMode;
+  final TicketModel _tickerMode;
 
 
   TicketOrderConfirm(this._tickerMode);
