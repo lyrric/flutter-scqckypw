@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/service/user_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class UserCenterEditView extends StatelessWidget{
 
@@ -16,14 +18,12 @@ class UserCenterEditView extends StatelessWidget{
         appBar: AppBar(
           centerTitle: true,
           title: new Text('编辑'),
-          actions: <Widget>[
-            IconButton(icon: Icon(Icons.done),
-              onPressed: (){
-
-              },)
-          ],
         ),
-        body: _Body(_realName, _sex, _idType, _idNo)
+        body: Container(
+          margin: EdgeInsets.only(left: 5, right: 5,top: 5),
+          child: _Body(_realName, _sex, _idType, _idNo),
+        ),
+
     );
   }
 }
@@ -52,15 +52,39 @@ class _BodyState extends State<_Body>{
   String _idType;
   String _idNo;
 
+  var _realNameCtrl;
+  var _idNoCtrl;
 
-  _BodyState(this._realName, this._sex, this._idType, this._idNo);
+  UserService _userService = new UserService();
+
+  _BodyState(this._realName, this._sex, this._idType, this._idNo){
+
+    switch(_sex){
+      case '男':
+        _sex = 'M';break;
+      case '女':
+        _sex = 'F';break;
+      case '保密':
+        _sex = 'S';break;
+    }
+    switch(_idType){
+      case '身份证':
+        _idType = 'id_card';break;
+      case '军人证':
+        _idType = 'military_card';break;
+      case '护照':
+        _idType = 'passport';break;
+    }
+    _realNameCtrl = TextEditingController(text: _realName);
+    _idNoCtrl  = TextEditingController(text: _idNo);
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: <Widget>[
         TextFormField(
-          controller: null,
+          controller: _realNameCtrl,
           decoration: const InputDecoration(
             //icon: Icon(Icons.person),
             hintText: '请输入真实姓名',
@@ -68,37 +92,47 @@ class _BodyState extends State<_Body>{
           ),
         ),
         new Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             new Text('性别：'),
-            RadioListTile<String>(
-              value: '男',
-              title: Text('男'),
-              groupValue: _sex,
-              onChanged: (value){
-                setState(() {
-                  _sex = value;
-                });
-              },
+            Container(
+              width: 100,
+              child: RadioListTile<String>(
+                value: 'M',
+                title: Text('男'),
+                groupValue: _sex,
+                onChanged: (value){
+                  setState(() {
+                    _sex = value;
+                  });
+                },
+              ),
             ),
-            RadioListTile<String>(
-              value: '女',
-              title: Text('女'),
-              groupValue: _sex,
-              onChanged: (value){
-                setState(() {
-                  _sex = value;
-                });
-              },
+            Container(
+              width: 100,
+              child:  RadioListTile<String>(
+                value: 'F',
+                title: Text('女'),
+                groupValue: _sex,
+                onChanged: (value){
+                  setState(() {
+                    _sex = value;
+                  });
+                },
+              ),
             ),
-            RadioListTile<String>(
-              value: '保密',
-              title: Text('保密'),
-              groupValue: _sex,
-              onChanged: (value){
-                setState(() {
-                  _sex = value;
-                });
-              },
+            Container(
+              width: 150,
+              child:  RadioListTile<String>(
+                value: 'S',
+                title: Text('保密'),
+                groupValue: _sex,
+                onChanged: (value){
+                  setState(() {
+                    _sex = value;
+                  });
+                },
+              ),
             ),
           ],
         ),
@@ -110,31 +144,60 @@ class _BodyState extends State<_Body>{
                   items: [
                     new DropdownMenuItem(
                       child: new Text('身份证'),
-                      value: '身份证',
+                      value: 'id_card',
                     ),
                     new DropdownMenuItem(
                       child: new Text('军人证'),
-                      value: '军人证',
+                      value: 'military_card',
                     ),
                     new DropdownMenuItem(
                       child: new Text('护照'),
-                      value: '护照',
+                      value: 'passport',
                     ),
                   ],
                   onChanged: (value){
-
-                  }
+                    setState(() {
+                      _idType = value;
+                    });
+                  },
+                hint: new Text('请选择'),
+                value: _idType,
               ),
             ),
           ],
         ),
         TextFormField(
-          controller: null,
+          controller: _idNoCtrl,
           decoration: const InputDecoration(
             hintText: '请输入证件号',
             labelText: '证件号',
           ),
         ),
+        Container(
+          padding: EdgeInsets.only(top: 5),
+          alignment: Alignment.center,
+          child: MaterialButton(
+            height: 40,
+            minWidth: 300,
+            color: Colors.blue,
+            textColor: Colors.white,
+            child: Text('保存'),
+            onPressed: (){
+                _userService.updateInfo(_realName, _sex, _idType, _idNo)
+                    .then((result){
+                      if(result.isEmpty){
+                        Fluttertoast.showToast(msg: '保存成功')
+                            .then((_){
+                              Navigator.of(context).pop(true);
+                        });
+                      }else{
+                        Fluttertoast.showToast(msg: result);
+                      }
+                });
+            },
+          ),
+        ),
+
       ],
     );
   }

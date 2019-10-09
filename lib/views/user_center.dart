@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data/data.dart';
+import 'package:flutter_scqckypw/service/user_service.dart';
 import 'package:flutter_scqckypw/views/user_center_edit.dart';
 
 class UserCenter extends StatefulWidget{
@@ -16,6 +17,7 @@ class _UserCenterState extends State<UserCenter>{
 
 
   double _lineHeight = 25;
+  UserService _userService = new UserService();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,15 @@ class _UserCenterState extends State<UserCenter>{
             onPressed: (){
                 Navigator.of(context).push(new MaterialPageRoute(builder: (_){
                   return new UserCenterEditView(Data.user.realName, Data.user.sex, Data.user.idType, Data.user.idNo);
-                }));
+                })).then((flag){
+                  if(flag != null && flag){
+                    _userService.getUser().then((ret){
+                      setState(() {
+
+                      });
+                    });
+                  }
+                });
             },)
         ],
       ),
@@ -38,51 +48,13 @@ class _UserCenterState extends State<UserCenter>{
             padding: EdgeInsets.only(left: 5, right: 5, top: 10),
             child: new Column(
               children: <Widget>[
-                Container(
-                  height: _lineHeight,
-                  child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text('用户名',style: TextStyle(fontSize: 16)),
-                      Text(Data.user.username,style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                ),
+                lineWidget('用户名', Data.user.username),
                 Divider(),
-
-                Container(
-                  height: _lineHeight,
-                  child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text('真实姓名',style: TextStyle(fontSize: 16)),
-                      Text(Data.user.realName,style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                ),
+                lineWidget('真实姓名', Data.user.realName),
                 Divider(),
-
-                Container(
-                  height: _lineHeight,
-                  child:  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text('性别',style: TextStyle(fontSize: 16)),
-                      Text(Data.user.sex,style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                ),
+                lineWidget('性别', Data.user.sex),
                 Divider(),
-                Container(
-                  height: _lineHeight,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text('证件', style: TextStyle(fontSize: 16),),
-                      Text(Data.user.idNo,style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                ),
+                lineWidget('证件', dealIdNo(Data.user.idNo)),
                 Divider(),
                 Container(
                   height: _lineHeight,
@@ -134,6 +106,27 @@ class _UserCenterState extends State<UserCenter>{
             ),
           ),
 
+        ],
+      ),
+    );
+  }
+
+  String dealIdNo(String idNo){
+    if(idNo == '未添加'){
+      return idNo;
+    }else{
+      return idNo.substring(0, 4) + '***';
+    }
+  }
+
+  Widget lineWidget(String key, String value){
+    return   Container(
+      height: _lineHeight,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(key, style: TextStyle(fontSize: 16),),
+          Text(value,style: TextStyle(fontSize: 16)),
         ],
       ),
     );

@@ -129,13 +129,7 @@ class _BodyState extends State<_Body>{
                   ),
                   new Container(
                     margin: EdgeInsets.only(left: 40, right: 50),
-                    child: new IconButton(icon: new Icon(Icons.sync), onPressed: (){
-                      super.setState((){
-                        CityModel temp = _fromCity;
-                        _fromCity = _targetCity;
-                        _targetCity = temp;
-                      });
-                    }),
+                    child: new Icon(Icons.sync),
                   ),
                   new Container(
                     width: 100,
@@ -152,7 +146,6 @@ class _BodyState extends State<_Body>{
                                 });
                             });
                           }
-
                         ),
                         Divider(height:10.0,indent:0.0,color: Colors.red,),
                       ],

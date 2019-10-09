@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
@@ -23,11 +25,6 @@ class UserService extends BaseService{
     String idType = document.querySelectorAll('#iType')[0].text;
     user.idType = idType;
     String idNo = document.querySelectorAll('#h_cs_id_number')[0].attributes['value'];
-    if(idNo != '未添加'){
-      String startStr = idNo.substring(0, 3);
-      String endStr = idNo.substring(idNo.length-3, idNo.length);
-      idNo = startStr + '***'+ endStr;
-    }
     user.idNo = idNo;
     String phone = document.querySelectorAll('#infoDiv > dl > dd')[7].text.replaceAll('\n', '').replaceAll(' ', '').replaceAll('手机：', '');
     phone = phone == '空'?'未绑定手机':phone;
@@ -37,5 +34,22 @@ class UserService extends BaseService{
     user.email = email;
     Data.user = user;
     return user;
+  }
+
+  ///更新用户
+  Future<String> updateInfo(String realName, String sex, String idType, String idNo) async {
+    Response response = await dio.post(USER_UPDATE_URL
+        ,queryParameters:{
+        'name':realName,
+        'gender':sex,
+        'idType':idType,
+        'idNo':idNo,
+      });
+    Map<String, dynamic> map = json.decode(response.data);
+    if(map['success']){
+      return '';
+    }else{
+      return map['msg'];
+    }
   }
 }

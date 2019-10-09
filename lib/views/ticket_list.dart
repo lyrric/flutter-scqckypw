@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
 import 'package:flutter_scqckypw/service/ticket_service.dart';
+import 'package:flutter_scqckypw/views/ticket_order_confirm.dart';
 
 class TicketListView extends StatefulWidget {
   //发车城市
@@ -78,96 +79,108 @@ class ListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlatButton(
       padding: EdgeInsets.zero,
-      child:  new Column(
-        children: <Widget>[
-          new Container(
-            decoration:  new BoxDecoration(
-              color: Colors.white, // 底色
-            ),
-            height: 100,
-            child: new Column(
-              children: <Widget>[
-                new Container(
-                  decoration:  new BoxDecoration(
-                    color: Colors.white, // 底色
-                  ),
-                  height: 70,
-                  margin: EdgeInsets.only(left: 10),
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      new Container(
-                        child: new Text(_getTime(), style: new TextStyle(fontSize: 20), ),
-                      ),
-                      new Container(
-                        child:  new Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            new Container(
-                              width: 100,
-                              padding: EdgeInsets.only(left: 10
-
-                              ),
-                              //decoration: new
-                              child: new Text(_ticket.fromStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
-                            ),
-                            new Container(
-                              width: 80,
-                              child:  new Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  new Text('途经：${_ticket.halfwayStation}',style: new TextStyle(fontSize: 10)),
-                                  new Image.asset("images/arrow_right.png", width: 80, height: 10,),
-                                  new Text('里程：${_ticket.mileage}公里',style: new TextStyle(fontSize: 10)),
-                                ],
-                              ),
-                            ),
-                            new Container(
-                              //decoration: ne
-                              width: 100,
-                              padding: EdgeInsets.only(left: 10),
-                              child: new Text(_ticket.targetStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
-                            ),
-                          ],
-                        ),
-                      ),
-                      new Text('${_ticket.price}元',style: new TextStyle(fontSize: 15)),
-                    ],
-                  ),
-                ),
-                new Divider(height: 5,color: Colors.blue,),
-                new Container(
-                  height: 15,
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      new Text('班次类型：${_ticket.ticketType}', style: new TextStyle(fontSize: 10),),
-                      new Text('车型：${_ticket.vehicleType}', style: new TextStyle(fontSize: 10),),
-                      new Text('票数：${_ticket.remainderTicketNum}', style: new TextStyle(fontSize: 10),),
-                      new Text('免票儿童数：${_ticket.remainderChildTicketNum}', style: new TextStyle(fontSize: 10),),
-                    ],
-                  ),
-                ),
-
-              ],
-            ),
-          ),
-          new Container(
-            decoration:  new BoxDecoration(
-              color: Color(0x12000000)
-            ),
-            height: 10,
-          ),
-        ],
-      ),
+      child:  new TicketItem(_ticket),
       onPressed: (){
         //点击事件
-
+        Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+          return new TicketOrderConfirm(_ticket);
+        }));
       },
     );
      
   }
 
+
+}
+
+class TicketItem extends StatelessWidget{
+
+  TicketModel _ticket;
+
+  TicketItem(this._ticket);
+
+  @override
+  Widget build(BuildContext context) {
+    return new Column(
+      children: <Widget>[
+        new Container(
+          decoration:  new BoxDecoration(
+            color: Colors.white, // 底色
+          ),
+          height: 100,
+          child: new Column(
+            children: <Widget>[
+              new Container(
+                decoration:  new BoxDecoration(
+                  color: Colors.white, // 底色
+                ),
+                height: 70,
+                margin: EdgeInsets.only(left: 10),
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    new Container(
+                      child: new Text(_getTime(), style: new TextStyle(fontSize: 20), ),
+                    ),
+                    new Container(
+                      child:  new Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          new Container(
+                            width: 100,
+                            padding: EdgeInsets.only(left: 10),
+                            //decoration: new
+                            child: new Text(_ticket.fromStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
+                          ),
+                          new Container(
+                            width: 80,
+                            child:  new Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                new Text('途经：${_ticket.halfwayStation}',style: new TextStyle(fontSize: 10)),
+                                new Image.asset("images/arrow_right.png", width: 80, height: 10,),
+                                new Text('里程：${_ticket.mileage}公里',style: new TextStyle(fontSize: 10)),
+                              ],
+                            ),
+                          ),
+                          new Container(
+                            //decoration: ne
+                            width: 100,
+                            padding: EdgeInsets.only(left: 10),
+                            child: new Text(_ticket.targetStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
+                          ),
+                        ],
+                      ),
+                    ),
+                    new Text('${_ticket.price}元',style: new TextStyle(fontSize: 15)),
+                  ],
+                ),
+              ),
+              new Divider(height: 5,color: Colors.blue,),
+              new Container(
+                height: 15,
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    new Text('班次类型：${_ticket.ticketType}', style: new TextStyle(fontSize: 10),),
+                    new Text('车型：${_ticket.vehicleType}', style: new TextStyle(fontSize: 10),),
+                    new Text('票数：${_ticket.remainderTicketNum}', style: new TextStyle(fontSize: 10),),
+                    new Text('免票儿童数：${_ticket.remainderChildTicketNum}', style: new TextStyle(fontSize: 10),),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        new Container(
+          decoration:  new BoxDecoration(
+              color: Color(0xFFF0EFF4)
+          ),
+          height: 10,
+        ),
+      ],
+    );
+  }
   String _getTime() {
     return _ticket.departureTime.split(' ')[1];
   }

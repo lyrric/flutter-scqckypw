@@ -11,3 +11,5 @@ const String LOGIN_PAGE_URL = BASE_URL + '/login/index.html';
 const String LOGIN_URL = BASE_URL + '/login/check.json';
 ///用户基本信息接口Url
 const String USER_CENTER_URL = BASE_URL + '/user/get.html';
+///用户基本信息修改接口Url
+const String USER_UPDATE_URL = BASE_URL + '/user/update.html';
