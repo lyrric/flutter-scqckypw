@@ -4,22 +4,17 @@ import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/service/passenger_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class PassengerEditView extends StatefulWidget{
-
-  final Passenger _passengerModel;
-
-
-  PassengerEditView(this._passengerModel);
+class PassengerAddView extends StatefulWidget{
 
   @override
   State createState() {
-    return _PassengerEditState(_passengerModel);
+    return _PassengerAddState();
   }
 }
 
-class _PassengerEditState extends State{
+class _PassengerAddState extends State{
 
-  Passenger _passenger;
+  Passenger _passenger = new Passenger();
 
   var _passengerService = new PassengerService();
 
@@ -27,10 +22,10 @@ class _PassengerEditState extends State{
   TextEditingController _idNoCtrl;
 
 
-  _PassengerEditState(this._passenger){
-    _nameCtrl = new TextEditingController(text: _passenger.realName);
-    _idNoCtrl = new TextEditingController(text: _passenger.idNumber);
-
+  _PassengerAddState(){
+    _passenger.idType = 'id_card';
+    _nameCtrl = new TextEditingController();
+    _idNoCtrl = new TextEditingController();
   }
 
   @override
@@ -56,7 +51,7 @@ class _PassengerEditState extends State{
                 ),
                 Container(
                   padding: EdgeInsets.only(top: 5),
-                  width: 100,
+                  width: 200,
                   child: TextFormField(
                     style: TextStyle(fontSize: 15),
                     controller: _nameCtrl,
@@ -67,7 +62,6 @@ class _PassengerEditState extends State{
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
@@ -165,7 +159,7 @@ class _PassengerEditState extends State{
               onPressed: (){
                 _passenger.realName = _nameCtrl.text;
                 _passenger.idNumber = _idNoCtrl.text;
-                _passengerService.update(_passenger).then((res){
+                _passengerService.add(_passenger).then((res){
                   if(res.isNotEmpty){
                     Fluttertoast.showToast(msg: res);
                   }else{

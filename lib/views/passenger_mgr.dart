@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data_util.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/service/passenger_service.dart';
+import 'package:flutter_scqckypw/views/passenger_add.dart';
 import 'package:flutter_scqckypw/views/passenger_edit.dart';
 
 import 'common_view.dart';
@@ -58,7 +59,9 @@ class _PassengerMgrState extends State<PassengerMgrView> {
                   ],
                 ),
                 onPressed: () {
-
+                  Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+                    return new PassengerAddView();
+                  }));
                 },
               )
           ),
@@ -125,7 +128,11 @@ class _PassengerItem extends StatelessWidget{
                       new Text('  成人票', style: TextStyle(fontSize: 12),),
                     ],
                   ),
-                  new Text(convertIdTypeByVal(_passenger.idType) + ' ${_passenger.idNumber}'),
+                  Container(
+                    padding: EdgeInsets.only(top: 5),
+                    child: new Text(convertIdTypeByVal(_passenger.idType) + ' ${_passenger.idNumber}'),
+                  ),
+
                 ],
               ),
               new Row(

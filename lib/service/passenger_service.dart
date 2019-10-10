@@ -58,6 +58,18 @@ class PassengerService extends BaseService{
           );
     return '';
   }
+
+  ///修改乘客信息，这个接口是直接跳到乘客界面
+  Future<String> add(Passenger passenger) async {
+    Response response = await dio.get(PASSENGER_ADD_URL,
+        queryParameters: {
+          'name':passenger.realName,
+          'idType':passenger.idType,
+          'idNo':passenger.idNumber, }
+    );
+    return '';
+  }
+
   ///删除乘客信息，这个接口是直接跳到乘客界面
   Future<String> delete(int id) async {
     Response response = await dio.get(PASSENGER_DELETE_URL,

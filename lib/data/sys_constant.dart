@@ -21,3 +21,5 @@ const String PASSENGER_UPDATE_URL = BASE_URL + '/user/edit';
 const String PASSENGER_CHECK_URL = BASE_URL + '/user/isPassengerExists';
 ///乘车人删除接口Url
 const String PASSENGER_DELETE_URL = BASE_URL + '/user/delete.html';
+///乘车人添加接口Url
+const String PASSENGER_ADD_URL = BASE_URL + '/user/add.html';
