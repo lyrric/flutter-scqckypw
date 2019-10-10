@@ -40,8 +40,8 @@ class _FormSate extends State<_FormView>{
   //验证码数据
   Uint8List captureBytes;
 
-  TextEditingController _usernameController = new TextEditingController(text: '123456');
-  TextEditingController _passwordController = new TextEditingController(text: '123456');
+  TextEditingController _usernameController = new TextEditingController(text: '15681770237');
+  TextEditingController _passwordController = new TextEditingController(text: 'xxx1asxxx');
   TextEditingController _captureCodeController = new TextEditingController();
 
   _FormSate(){
@@ -94,8 +94,7 @@ class _FormSate extends State<_FormView>{
               ),
               new Container(
                 width: 150,
-                child: captureBytes==null?
-                new Text('加载中', style: new TextStyle(fontSize: 8),):
+                child: captureBytes==null?Center(child: CircularProgressIndicator(), ):
                 new FlatButton(
                   child: Image.memory(captureBytes,width: 150,height:50, fit: BoxFit.fill,),
                   onPressed: (){
@@ -130,6 +129,8 @@ class _FormSate extends State<_FormView>{
                           Navigator.of(context).pop(true);
                         });
                       }else{
+                        initCapture();
+                        _captureCodeController.clear();
                         Fluttertoast.showToast(
                             msg: result,
                             toastLength: Toast.LENGTH_SHORT,

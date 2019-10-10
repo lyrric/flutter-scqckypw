@@ -2,12 +2,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data/data.dart';
-import 'package:flutter_scqckypw/service/common_service.dart';
 import 'package:flutter_scqckypw/service/user_service.dart';
 import 'package:flutter_scqckypw/views/login.dart';
 import 'package:flutter_scqckypw/views/passenger_mgr.dart';
 import 'package:flutter_scqckypw/views/user_center.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 ///首页侧边栏
 class HomeDrawerWidget extends StatelessWidget{
@@ -73,30 +71,54 @@ class _UserDrawerHeaderStat extends State<_UserDrawerHeader>{
 
   UserService _userService = new UserService();
 
-  bool flag = false;
-
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(milliseconds: 200)).then((e) {
-      if(Data.cookie.isEmpty){
-        if(!flag){
-          flag = true;
+    return new DrawerHeader(
+      padding: EdgeInsets.zero,
+      child: FlatButton(
+        padding: EdgeInsets.zero,
+        child: new Stack(
+          children: <Widget>[
+            new Image.asset("images/user_header_bg.jpg", fit: BoxFit.fill, width: double.infinity,),
+            new Align(
+              alignment: FractionalOffset.bottomLeft,
+              child: new Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new CircleAvatar(
+                    backgroundImage: AssetImage("images/user_default_avatar.jpg"),
+                    radius: 35.0,
+                  ),
+                  new Container(
+                    height: 70,
+                    margin: EdgeInsets.only(left: 12.0, bottom: 12.0),
+                    child: new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        new Text(Data.user.username, style: new TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white),),
+                        new Text(Data.user.email, style: new TextStyle(
+                            fontSize: 14.0, color: Colors.white),),
+//                      new Text(Data.user.phone, style: new TextStyle(
+//                          fontSize: 14.0, color: Colors.white),),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+        onPressed: (){
           Navigator.of(context).push(new MaterialPageRoute(builder:(_){
             return new LoginView();
           })).then((res){
-            if(res == null){
-              Fluttertoast.showToast(
-                  msg: '请先登陆',
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIos: 1,
-                  backgroundColor: Colors.black,
-                  textColor: Colors.white,
-                  fontSize: 16.0
-              ).then((_){
-                Navigator.of(context).pop(true);
-              });
-            }else{
+            if(res != null && res){
               _userService.getUser().then((_){
                 setState(() {
 
@@ -104,49 +126,8 @@ class _UserDrawerHeaderStat extends State<_UserDrawerHeader>{
               });
             }
           });
-        }
-
-      }
-    });
-    return new DrawerHeader(
-      padding: EdgeInsets.zero,
-      child: new Stack(
-        children: <Widget>[
-          new Image.asset("images/user_header_bg.jpg", fit: BoxFit.fill, width: double.infinity,),
-          new Align(
-            alignment: FractionalOffset.bottomLeft,
-            child: new Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                new CircleAvatar(
-                  backgroundImage: AssetImage("images/user_default_avatar.jpg"),
-                  radius: 35.0,
-                ),
-                new Container(
-                  height: 70,
-                  margin: EdgeInsets.only(left: 12.0, bottom: 12.0),
-                  child: new Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      new Text(Data.user.username, style: new TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white),),
-                      new Text(Data.user.email, style: new TextStyle(
-                          fontSize: 14.0, color: Colors.white),),
-//                      new Text(Data.user.phone, style: new TextStyle(
-//                          fontSize: 14.0, color: Colors.white),),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
+        },
+      )
     );
   }
 }

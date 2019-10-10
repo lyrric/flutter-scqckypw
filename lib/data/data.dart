@@ -10,7 +10,7 @@ class Data{
 
 
   static List<CityModel>  _cityList;
-  static UserModel _defaultUser = new UserModel("未登录", '-', '-', '-', '-', '-');
+  static UserModel _defaultUser = new UserModel("点击登陆", '-', '-', '-', '-', '-');
   static UserModel user = _defaultUser;
   static String cookie = "";
 
