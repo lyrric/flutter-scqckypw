@@ -18,8 +18,8 @@ TicketModel _$TicketModelFromJson(Map<String, dynamic> json) {
     ..price = (json['FullPrice'] as num)?.toDouble()
     ..remainderTicketNum = json['SAmount'] as int
     ..remainderChildTicketNum = json['ChildSAmount'] as int
-    ..carryStaId = json['carry_sta_id'] as String
-    ..signId = json['sign_id'] as String;
+    ..carryStaId = json['CarryStaId'] as String
+    ..signId = json['SignID'] as String;
 }
 
 Map<String, dynamic> _$TicketModelToJson(TicketModel instance) =>
@@ -34,6 +34,6 @@ Map<String, dynamic> _$TicketModelToJson(TicketModel instance) =>
       'FullPrice': instance.price,
       'SAmount': instance.remainderTicketNum,
       'ChildSAmount': instance.remainderChildTicketNum,
-      'carry_sta_id': instance.carryStaId,
-      'sign_id': instance.signId,
+      'CarryStaId': instance.carryStaId,
+      'SignID': instance.signId,
     };

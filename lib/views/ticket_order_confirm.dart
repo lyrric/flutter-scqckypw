@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
 import 'package:flutter_scqckypw/service/passenger_service.dart';
+import 'package:flutter_scqckypw/service/ticket_service.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
 
 import '../data_util.dart';
@@ -29,8 +30,13 @@ class _Body extends State<TicketOrderConfirm> {
   List<Passenger> _selectedPassengers = new List();
   ///总共价格
   double _totalPrice = 0.0;
+  ///token创建订单时需要
+  String _token;
+
+  String _captureCode;
 
   PassengerService _passengerService = new PassengerService();
+  TicketService _ticketService = new TicketService();
 
   var _contactNameCtrl = new TextEditingController(text: '张三');
   var _contactPhoneCtrl = new TextEditingController(text: '158025466112');
@@ -45,10 +51,17 @@ class _Body extends State<TicketOrderConfirm> {
       });
     });
   }
+  _initToken(){
+    _ticketService.getOrderPageToken(_tickerMode.carryStaId, _tickerMode.departureTime, _tickerMode.signId, _tickerMode.targetStation)
+        .then((data){
+          _token = data;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     _loadUserPassengers();
+    _initToken();
     return new Scaffold(
       backgroundColor: Color(0xFFF0EFF4),
       appBar: new AppBar(

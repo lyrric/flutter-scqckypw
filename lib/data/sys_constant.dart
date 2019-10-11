@@ -23,3 +23,11 @@ const String PASSENGER_CHECK_URL = BASE_URL + '/user/isPassengerExists';
 const String PASSENGER_DELETE_URL = BASE_URL + '/user/delete.html';
 ///乘车人添加接口Url
 const String PASSENGER_ADD_URL = BASE_URL + '/user/add.html';
+///创建订单页面Url
+const String CREATE_ORDER_PAGE_URL = BASE_URL + '/userCommon/createTicketOrder.html';
+///判断是否有未支付订单接口Url
+const String HAVING_PAYING_ORDER_URL = BASE_URL + '/ticketOrder/havePayingOrder.json';
+///锁定车票接口Url
+const String LOCK_TICKET_URL = BASE_URL + '/ticketOrder/lockTicket.html';
+///付款选择页面Url
+const String CHOOSE_PAY_WAY_URL = BASE_URL + '/ticketOrder/redirectOrder.html';

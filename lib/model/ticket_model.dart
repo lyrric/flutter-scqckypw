@@ -36,10 +36,10 @@ class TicketModel{
   @JsonKey(name: 'ChildSAmount')
   int remainderChildTicketNum;
   //乘车车站拼音首字母
-  @JsonKey(name: 'carry_sta_id')
+  @JsonKey(name: 'CarryStaId')
   String carryStaId;
   //不知道是啥，创建订单时需要
-  @JsonKey(name: 'sign_id')
+  @JsonKey(name: 'SignID')
   String signId;
 
 

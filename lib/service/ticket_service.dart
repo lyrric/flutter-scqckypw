@@ -6,6 +6,7 @@ import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
 import 'package:flutter_scqckypw/service/base_service.dart';
+import 'package:html/parser.dart' show parse;
 
 ///车票
 class TicketService extends BaseService{
@@ -37,5 +38,17 @@ class TicketService extends BaseService{
     return result;
   }
 
+  ///获取token，创建订单的时候需要
+  Future<String> getOrderPageToken(String carryStaId,String strDate, String signId, String stopName) async {
+    Response response = await dio.get(CREATE_ORDER_PAGE_URL,queryParameters: {
+      'carry_sta_id':carryStaId,
+      'str_date':strDate,
+      'sign_id':signId,
+      'stop_name':stopName
+    });
+    var document = parse(response.data);
+    String token = document.querySelector('#ticket_with_insurant > input[name="token"]').attributes['value'];
+    return token;
+  }
 
 }
