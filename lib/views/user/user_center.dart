@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/service/user_service.dart';
-import 'package:flutter_scqckypw/views/user_center_edit.dart';
+import 'package:flutter_scqckypw/views/user/user_center_edit.dart';
 
 class UserCenter extends StatefulWidget{
 

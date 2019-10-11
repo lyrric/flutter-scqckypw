@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data_util.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/service/passenger_service.dart';
-import 'package:flutter_scqckypw/views/passenger_add.dart';
-import 'package:flutter_scqckypw/views/passenger_edit.dart';
+import 'package:flutter_scqckypw/views/passenger/passenger_add.dart';
+import 'package:flutter_scqckypw/views/passenger/passenger_edit.dart';
 
-import 'common_view.dart';
+import '../common_view.dart';
 
 ///乘车人管理
 class PassengerMgrView extends StatefulWidget{

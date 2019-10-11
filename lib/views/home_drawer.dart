@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/service/user_service.dart';
 import 'package:flutter_scqckypw/views/login.dart';
-import 'package:flutter_scqckypw/views/passenger_mgr.dart';
-import 'package:flutter_scqckypw/views/user_center.dart';
+import 'package:flutter_scqckypw/views/passenger/passenger_mgr.dart';
+import 'package:flutter_scqckypw/views/user/user_center.dart';
 
 ///首页侧边栏
 class HomeDrawerWidget extends StatelessWidget{
@@ -24,9 +24,12 @@ class HomeDrawerWidget extends StatelessWidget{
             leading: new CircleAvatar(child: new Text('A'), ),
             title: new Text("我的信息"),
             onTap: (){
-              Navigator.of(context).push(new MaterialPageRoute(builder: (_){
-                return new UserCenter();
-              }));
+              if(Data.cookie.isNotEmpty){
+                Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+                  return new UserCenter();
+                }));
+              }
+
             },
           ),
         ),
@@ -42,9 +45,11 @@ class HomeDrawerWidget extends StatelessWidget{
             leading: new CircleAvatar(child: new Text('C'), ),
             title: new Text("常用乘车人"),
             onTap: (){
-            Navigator.of(context).push(new MaterialPageRoute(builder: (_){
-              return new PassengerMgrView();
-            }));
+              if(Data.cookie.isNotEmpty){
+                Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+                  return new PassengerMgrView();
+                }));
+              }
             },
           ),
         ),

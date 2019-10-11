@@ -60,7 +60,7 @@ class TicketListState extends State<TicketListView> {
     }else{
       List<Widget> list = new List();
       for(TicketModel ticket in _tickets){
-        list.add(new ListItem(ticket));
+        list.add(new _ListItem(ticket));
       }return ListView(
         children: list
       );
@@ -69,11 +69,11 @@ class TicketListState extends State<TicketListView> {
 }
 
 ///列表项
-class ListItem extends StatelessWidget {
+class _ListItem extends StatelessWidget {
 
-  TicketModel _ticket;
+  final TicketModel _ticket;
 
-  ListItem(this._ticket);
+  _ListItem(this._ticket);
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +158,8 @@ class TicketItem extends StatelessWidget{
               ),
               new Divider(height: 5,color: Colors.blue,),
               new Container(
-                height: 15,
+                padding: EdgeInsets.only(top: 5),
+                height: 20,
                 child: new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[

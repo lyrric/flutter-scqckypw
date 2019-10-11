@@ -129,7 +129,7 @@ class _BodyState extends State<_Body>{
                   ),
                   new Container(
                     margin: EdgeInsets.only(left: 40, right: 50),
-                    child: new Icon(Icons.sync),
+                    child: new Icon(Icons.arrow_forward),
                   ),
                   new Container(
                     width: 100,
