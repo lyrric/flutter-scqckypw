@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
 import 'package:flutter_scqckypw/service/ticket_service.dart';
-import 'package:flutter_scqckypw/views/ticket_order_confirm.dart';
+import 'package:flutter_scqckypw/views/order_confirm.dart';
 
 class TicketListView extends StatefulWidget {
   //发车城市

@@ -3,6 +3,8 @@
 const String BASE_URL = 'https://www.scqckypw.com';
 ///验证码Url
 const String CAPTURE_URL = BASE_URL + '/rCode.jpg?d=';
+///验证码是否正确接口Url
+const String CAPTURE_CHECK_URL = BASE_URL + '/rCodeCheck';
 ///终点车站Url
 const String TARGET_CITY_URL = BASE_URL + '/get/targetCitys.html';
 ///登陆页面Url
@@ -31,3 +33,5 @@ const String HAVING_PAYING_ORDER_URL = BASE_URL + '/ticketOrder/havePayingOrder.
 const String LOCK_TICKET_URL = BASE_URL + '/ticketOrder/lockTicket.html';
 ///付款选择页面Url
 const String CHOOSE_PAY_WAY_URL = BASE_URL + '/ticketOrder/redirectOrder.html';
+///付款中间页面Url
+const String PAY_MIDDLE_URL = BASE_URL + '/ticketOrder/middlePay.html';

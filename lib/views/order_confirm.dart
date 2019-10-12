@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
+import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/service/passenger_service.dart';
 import 'package:flutter_scqckypw/service/ticket_service.dart';
+import 'package:flutter_scqckypw/views/common_view.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
 
 import '../data_util.dart';
@@ -33,15 +35,15 @@ class _Body extends State<TicketOrderConfirm> {
   ///token创建订单时需要
   String _token;
 
-  String _captureCode;
-
-  PassengerService _passengerService = new PassengerService();
-  TicketService _ticketService = new TicketService();
-
+  var orderService = new OrderService();
+  var _passengerService = new PassengerService();
+  var _ticketService = new TicketService();
   var _contactNameCtrl = new TextEditingController(text: '张三');
   var _contactPhoneCtrl = new TextEditingController(text: '158025466112');
 
-  _Body(this._tickerMode);
+  _Body(this._tickerMode){
+    _initToken();
+  }
 
   ///加载常用乘车人
   _loadUserPassengers() {
@@ -61,7 +63,6 @@ class _Body extends State<TicketOrderConfirm> {
   @override
   Widget build(BuildContext context) {
     _loadUserPassengers();
-    _initToken();
     return new Scaffold(
       backgroundColor: Color(0xFFF0EFF4),
       appBar: new AppBar(
@@ -144,7 +145,16 @@ class _Body extends State<TicketOrderConfirm> {
                 height: 40,
                 minWidth: 350,
                 child: Text('立刻预定'),
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(context: context, builder: (content){
+                    return new CaptureCodeDialog(context);
+                  }).then((data){
+                    if(data != null ){
+                      //正确
+                      orderService.order(_tickerMode, _selectedPassengers, _contactNameCtrl.text, _contactNameCtrl.text, _token, data);
+                    }
+                  });
+                },
               ),
             ),
           ],
