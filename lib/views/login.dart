@@ -40,8 +40,8 @@ class _FormSate extends State<_FormView>{
   //验证码数据
   Uint8List captureBytes;
 
-  TextEditingController _usernameController = new TextEditingController(text: '123456');
-  TextEditingController _passwordController = new TextEditingController(text: 'asd');
+  TextEditingController _usernameController = new TextEditingController(text: '1');
+  TextEditingController _passwordController = new TextEditingController(text: '1');
   TextEditingController _captureCodeController = new TextEditingController();
 
   _FormSate(){

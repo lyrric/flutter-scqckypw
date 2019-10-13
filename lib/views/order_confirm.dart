@@ -6,6 +6,7 @@ import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/service/passenger_service.dart';
 import 'package:flutter_scqckypw/service/ticket_service.dart';
 import 'package:flutter_scqckypw/views/common_view.dart';
+import 'package:flutter_scqckypw/views/order_pay.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
 
 import '../data_util.dart';
@@ -151,7 +152,14 @@ class _Body extends State<TicketOrderConfirm> {
                   }).then((data){
                     if(data != null ){
                       //正确
-                      orderService.order(_tickerMode, _selectedPassengers, _contactNameCtrl.text, _contactNameCtrl.text, _token, data);
+                      orderService.order(_tickerMode, _selectedPassengers, _contactNameCtrl.text, _contactNameCtrl.text, _token, data)
+                          .then((httpResult){
+                         if(httpResult.success){
+                           Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+                              return new OrderPayingView(_tickerMode, _selectedPassengers, _totalPrice, _contactNameCtrl.text, _contactPhoneCtrl.text, httpResult.data);
+                           }));
+                         }
+                      });
                     }
                   });
                 },

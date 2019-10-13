@@ -1,13 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/data/sys_constant.dart';
+import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
+import 'package:flutter_scqckypw/service/order_service.dart';
+import 'package:flutter_scqckypw/views/pay_web_view.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../data_util.dart';
 
-///订单支付界面
-class OrderPaying extends StatelessWidget {
+class OrderPayingView extends StatefulWidget{
 
   ///车次信息
   final TicketModel _tickerMode;
@@ -20,9 +24,36 @@ class OrderPaying extends StatelessWidget {
 
   final String contactPhone;
 
+  final int orderId;
 
-  OrderPaying(this._tickerMode, this._selectedPassengers, this._totalPrice,
-      this.contactName, this.contactPhone);
+
+  OrderPayingView(this._tickerMode, this._selectedPassengers, this._totalPrice,
+      this.contactName, this.contactPhone, this.orderId);
+
+  @override
+  State createState() {
+    return _OrderPayingState(_tickerMode, _selectedPassengers, _totalPrice, contactName, contactPhone, orderId);
+  }
+}
+
+///订单支付界面
+class _OrderPayingState extends State {
+
+  ///车次信息
+  final TicketModel _tickerMode;
+  ///用户常用乘车人
+  final List<Passenger> _selectedPassengers;
+  ///总共价格
+  final double _totalPrice;
+
+  final String contactName;
+
+  final String contactPhone;
+
+  final int orderId;
+
+  _OrderPayingState(this._tickerMode, this._selectedPassengers,
+      this._totalPrice, this.contactName, this.contactPhone, this.orderId);
 
   @override
   Widget build(BuildContext context) {
@@ -108,13 +139,21 @@ class OrderPaying extends StatelessWidget {
                 height: 40,
                 minWidth: 350,
                 child: Text('支付'),
-                onPressed: () {}
+                onPressed: () async {
+                 _pay('alipay');
+                }
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  _pay(String payWay) async {
+    Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+      return new PayWebView(PAY_MIDDLE_URL+'?payid='+orderId.toString()+'&plateform='+payWay);
+    }));
   }
 
   ///选择乘客

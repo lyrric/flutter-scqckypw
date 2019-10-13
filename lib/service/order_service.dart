@@ -65,11 +65,12 @@ class OrderService extends BaseService{
       }
     }
     String referer = response.headers.value('Location');
-    return HttpResult.success(referer);
+    String orderId= referer.split('=')[1];
+    return HttpResult.success(int.parse(orderId));
   }
 
   ///获取待付款订单的数据
-  Future<HttpResult> getUnPayOrderDetail (int orderId) async {
+/*  Future<HttpResult> getUnPayOrderDetail (int orderId) async {
     Response response = await dio.get(CHOOSE_PAY_WAY_URL, queryParameters: {
       'pay_order_id':orderId
     });
@@ -83,10 +84,10 @@ class OrderService extends BaseService{
     map['qr_pay_mode'] = document.querySelector('#form_pay > input[name="qr_pay_mode"]').attributes['value'];
     map['discountCode'] = document.querySelector('#form_pay > input[name="discountCode"]').attributes['value'];
     return HttpResult.success(map);
-  }
+  }*/
 
-  ///付款
-  pay(Map map) async {
+  /*///付款
+  Future<HttpResult> pay(Map map) async {
     Response response = await dio.post(PAY_MIDDLE_URL, queryParameters: map);
     var document = parse(response.data);
     Map data = new Map();
@@ -122,9 +123,12 @@ class OrderService extends BaseService{
     //这个referer会连续跳转好几次，并且伴随着cookie的设置，比较复杂，放在webView里面可能好些
     //https://mapi.alipay.com/gateway.do --> https://unitradeadapter.alipay.com/gateway/exterfaceAssign.do -> https://excashier.alipay.com/standard/auth.htm?payOrderId=22dc050ed8de44e7b36b65ced83aba31.80
     String referer = response.headers.value('Location');
+    return HttpResult.success(referer);
+    String qrCodeUrl = document.querySelector('#J_qrCode').attributes['value'];
+    //启动参数，value值需要URL_ENCODE,?_s=web-other好像可以不要
+    //alipays://platformapi/startapp?saId=10000007&clientVersion=3.7.0.0718&qrcode=https://qr.alipay.com/upx08084asousb6fweg7802d?_s=web-other
 
-
-  }
+  }*/
 
   ///302跳转
   Future<HttpResult> _jump(String url) async {

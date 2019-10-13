@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
-import 'package:flutter_scqckypw/model/target_city_model.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_scqckypw/views/pay_web_view.dart';
 import 'package:flutter_scqckypw/views/target_city_selector_.dart';
-import 'package:flutter_scqckypw/views/ticket_list.dart';
 
 void main() => runApp(MyApp());
 
@@ -183,7 +182,8 @@ class _BodyState extends State<_Body>{
                   child: Text('查询'),
                   onPressed: (){
                     Navigator.of(_topContext).push(new MaterialPageRoute(builder: (_){
-                      return new TicketListView(_fromCity, _targetCity, _getDateString());
+                      //return new TicketListView(_fromCity, _targetCity, _getDateString());
+                      return new PayWebView('https://www.taobao.com');
                     }));
                   },
                 ),
