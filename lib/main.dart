@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
+import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
+import 'package:flutter_scqckypw/views/order_pay.dart';
 import 'package:flutter_scqckypw/views/pay_web_view.dart';
 import 'package:flutter_scqckypw/views/target_city_selector_.dart';
+import 'package:flutter_scqckypw/views/ticket_list.dart';
 
 void main() => runApp(MyApp());
 
@@ -66,6 +69,7 @@ class _Body extends StatefulWidget{
 
   _Body(this._topContext);
 
+  OrderService orderService = new OrderService();
   @override
   State createState() {
     return new _BodyState(_topContext);
@@ -83,6 +87,8 @@ class _BodyState extends State<_Body>{
   //处罚日期
   DateTime _date = DateTime.now();
 
+  OrderService orderService = new OrderService();
+  
   BuildContext _topContext;
 
   _BodyState(this._topContext);
@@ -182,15 +188,9 @@ class _BodyState extends State<_Body>{
                   child: Text('查询'),
                   onPressed: (){
                     Navigator.of(_topContext).push(new MaterialPageRoute(builder: (_){
-                      //return new TicketListView(_fromCity, _targetCity, _getDateString());
-                      /*return new WebviewScaffold(
-                        url: 'http://www.taobao.com',
-                        appBar: new AppBar(
-                          title: Text('确认订单'),
-                        ),
-                        initialChild: new CircularProgressIndicator(),
-                      );*/
-                      return new PayWebView('https://www.taobao.com');
+                      return new TicketListView(_fromCity, _targetCity, _getDateString());
+                      //return new PayWebView('https://www.taobao.com');
+                      //return new OrderPayingView(50322184);
                     }));
                   },
                 ),

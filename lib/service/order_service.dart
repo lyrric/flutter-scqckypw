@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
+import 'package:flutter_scqckypw/model/pay_order_info.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
 import 'package:flutter_scqckypw/service/base_service.dart';
 import 'package:html/parser.dart' show parse;
@@ -29,8 +30,8 @@ class OrderService extends BaseService{
   }
   ///锁定车票
   Future<HttpResult> _lockTicket(TicketModel ticketModel, List<Passenger> passengers, String contactName, String phone,String token, String captureCode) async {
-    Map para = new Map();
-    para['sdfgfgfg'] = 'on';
+    var para = new Map<String, dynamic> ();
+    //para['sdfgfgfg'] = 'on';
     para['contact_name'] = contactName;
     para['phone_num'] = phone;
     para['contact_card_num'] = '';
@@ -49,6 +50,8 @@ class OrderService extends BaseService{
     //乘客信息
     for(int i=0; i<passengers.length; i++){
       para['passenger_ticket_type'+(i+1).toString()] = 0;
+      para['passenger_card_type'+(i+1).toString()] = passengers[i].idType;
+      para['passenger_card_num'+(i+1).toString()] = passengers[i].idNumber;
       para['passenger_name'+(i+1).toString()] = passengers[i].realName;
       para['birthday'+(i+1).toString()] = passengers[i].idNumber.substring(6, 10)+ '-'+passengers[i].idNumber.substring(10, 12)+'-'+passengers[i].idNumber.substring(12, 14);
       para['bring_child'+(i+1).toString()] = 0;
@@ -65,8 +68,32 @@ class OrderService extends BaseService{
       }
     }
     String referer = response.headers.value('Location');
+    if(referer.indexOf('errMsg') != -1){
+      return HttpResult.error('锁定车票失败');
+    }
     String orderId= referer.split('=')[1];
     return HttpResult.success(int.parse(orderId));
+  }
+  ///获取待支付的订单信息
+  Future<HttpResult> getUnPayOrderDetail (int orderId) async {
+    Response response = await dio.get(CHOOSE_PAY_WAY_URL, queryParameters: {
+      'pay_order_id':orderId
+    });
+    var document = parse(response.data);
+    var list = document.querySelectorAll('#rnbox4');
+    List<PayOrderInfo> data = new List();
+    for(int i=0;i<list.length;i++){
+      var item = list[i];
+      var payOrderInfo = new PayOrderInfo();
+      payOrderInfo.fromStation = item.querySelectorAll('ul > li')[0].text;
+      payOrderInfo.targetStation = item.querySelectorAll('ul > li')[1].text;
+      payOrderInfo.passengerName = item.querySelectorAll('ul > li')[2].text;
+      payOrderInfo.date = item.querySelectorAll('ul > li')[3].text;
+      payOrderInfo.prices = double.parse(item.querySelectorAll('ul > li')[4].text.replaceAll('\n', '').replaceAll('\t', ''));
+      payOrderInfo.idNumber = document.querySelectorAll('#box3 > div.em_lst > ul > li.c3')[i].text.replaceAll('\n', '').replaceAll('\t', '');
+      data.add(payOrderInfo);
+    }
+    return HttpResult.success(data);
   }
 
   ///获取待付款订单的数据

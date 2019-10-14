@@ -156,7 +156,7 @@ class _Body extends State<TicketOrderConfirm> {
                           .then((httpResult){
                          if(httpResult.success){
                            Navigator.of(context).push(new MaterialPageRoute(builder: (_){
-                              return new OrderPayingView(_tickerMode, _selectedPassengers, _totalPrice, _contactNameCtrl.text, _contactPhoneCtrl.text, httpResult.data);
+                              return new OrderPayingView(httpResult.data);
                            }));
                          }
                       });

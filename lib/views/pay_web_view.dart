@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/data/data.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -23,28 +24,26 @@ class _State extends State{
 
   final String initialUrl;
 
-
   _State(this.initialUrl);
+
+  String _title = '';
 
   @override
   Widget build(BuildContext context) {
-    /*return WebviewScaffold(
-      appBar: new AppBar(
-        centerTitle: true,
-        title: Text('付款'),
-      ),
-      url: initialUrl,
-    );*/
     return Scaffold(
       appBar: AppBar(
-        title: Text('付款'),
+        title: Text(_title),
       ),
       body: WebView(
+        onWebViewCreated: (ctrl){
+          ctrl.loadUrl(initialUrl, headers:{
+            'Cookie':Data.cookie
+          });
+
+        },
         javascriptMode:JavascriptMode.unrestricted,
-        initialUrl: initialUrl,
         navigationDelegate: (NavigationRequest request){
-          print(request.url);
-          if(request.url.startsWith('tbopen')){
+          if(request.url.startsWith('alipay')){
             _lunch(request.url);
             return NavigationDecision.prevent;
           }
