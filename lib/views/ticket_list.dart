@@ -26,7 +26,7 @@ class TicketListState extends State<TicketListView> {
   CityModel _fromCity;
   //目标城市
   CityModel _targetCity;
-  //处罚日期
+  //出发日期
   String _date;
 
   List<TicketModel> _tickets;

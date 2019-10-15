@@ -47,6 +47,7 @@ flutter:
     - images/user_default_avatar.jpg
     - images/user_header_bg.jpg
     - images/arrow_right.png
+    - images/order_list.jpg
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
