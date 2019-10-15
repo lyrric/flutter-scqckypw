@@ -145,23 +145,25 @@ class _OrderItem extends StatelessWidget{
                 margin: EdgeInsets.only(top: 10, bottom: 10),
                 child: Image.asset('images/order_list.jpg', height: 50,),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    width: 300,
-                    alignment: Alignment.topLeft,
-                    padding: EdgeInsets.only(left: 10, top: 0),
-                    child: Text(_order.fromStation),
-                  ),
-                  Container(
-                    width: 300,
-                    alignment: Alignment.bottomLeft,
-                    padding: EdgeInsets.only(left: 10,  top: 15),
-                    child: Text(_order.targetStation),
-                  ),
-                ],
+              Container(
+                height: 70,
+                child:  Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      width: 300,
+                      padding: EdgeInsets.only(top: 5, left: 10),
+                      child: Text(_order.fromStation),
+                    ),
+                    Container(
+                      width: 300,
+                      padding: EdgeInsets.only(bottom: 5, left: 10),
+                      child: Text(_order.targetStation),
+                    ),
+                  ],
+                ),
               ),
+
             ],
           ),
           Container(
