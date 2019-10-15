@@ -6,7 +6,6 @@ import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
 import 'package:flutter_scqckypw/views/order_pay.dart';
-import 'package:flutter_scqckypw/views/pay_web_view.dart';
 import 'package:flutter_scqckypw/views/target_city_selector_.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
 
@@ -189,8 +188,8 @@ class _BodyState extends State<_Body>{
                   onPressed: (){
                     Navigator.of(_topContext).push(new MaterialPageRoute(builder: (_){
                       return new TicketListView(_fromCity, _targetCity, _getDateString());
-                      //return new PayWebView('https://www.taobao.com');
-                      //return new OrderPayingView(50322184);
+                      //return new PayWebView('https://www.scqckypw.com/user/index.html');
+                      //return new OrderPayingView(sssssss);
                     }));
                   },
                 ),
