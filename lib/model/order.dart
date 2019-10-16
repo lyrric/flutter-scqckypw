@@ -23,10 +23,14 @@ class OrderList{
 class OrderDetail{
   ///车票ID
   String ticketId;
+  ///订单ID
+  int orderId;
   ///车票状态
   String ticketStatus;
   ///乘客姓名
   String passengerName;
+  ///单价
+  double price;
   ///乘客类型
   String passengerType;
   ///乘客证件号码

@@ -2,6 +2,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
+import 'package:flutter_scqckypw/model/order.dart';
+import 'package:flutter_scqckypw/model/page_result.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/model/pay_order_info.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
@@ -11,6 +13,63 @@ import 'package:html/parser.dart' show parse;
 ///订单
 class OrderService extends BaseService{
 
+  ///我的订单列表
+  Future<HttpResult> myOrderList(int currentPage, String orderStatus) async {
+    try{
+      Response response = await dio.get(MY_OREDER_LIST_URL, queryParameters: {
+        'pageSize':20,
+        'currentPage':currentPage,
+        'orderState':orderStatus
+      });
+      var document = parse(response.data);
+      ///获取总页数，和数据总数
+      int startIndex = response.data.toString().indexOf('countPage = ');
+      int endIndex = response.data.toString().indexOf(';', startIndex);
+      int totalPage = int.parse(response.data.toString().substring(startIndex+'countPage = '.length, endIndex));
+      var pageResult = new PageResult();
+      pageResult.totalPage = totalPage;
+      startIndex = response.data.toString().indexOf('count = ');
+      endIndex = response.data.toString().indexOf(';', startIndex);
+      int totalCont = int.parse(response.data.toString().substring(startIndex+'count = '.length, endIndex));
+      pageResult.totalCount = totalCont;
+
+      ///获取数据
+      List<OrderList> list = new List();
+      var resultDiv = document.querySelectorAll('#hiddenresult > div');
+      for(var item in resultDiv){
+        var order = new OrderList();
+        order.payOrderId = int.parse(item.querySelectorAll(' form > table > tbody > tr > td >input')[0].attributes['value']);
+        order.tradeNumber = item.querySelectorAll('form > table > tbody > tr > td')[1].nodes[2].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
+        order.departureTime = item.querySelectorAll('form > table > tbody > tr > td')[2].nodes[0].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll('发车时间: ', '');
+        order.price = double.parse(item.querySelectorAll('form > table > tbody > tr > td')[3].nodes[0].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll('总金额(元):', ''));
+        order.fromStation = item.querySelectorAll('form > table > tbody > tr')[2].querySelectorAll('td')[1].nodes[0].text;
+        order.targetStation = item.querySelectorAll('form > table > tbody > tr')[2].querySelectorAll('td')[1].nodes[2].text.replaceAll(' ', '');
+        if(item.querySelectorAll('form > table > tbody > tr > td')[5].nodes[1].nodes.length == 7){
+          //待支付，可用操作（支付，取消订单）
+          order.orderStatus = '待付款';
+        }else{
+          order.orderStatus = item.querySelectorAll('form > table > tbody > tr > td')[5].nodes[1].nodes[1].text;
+        }
+        var subItem = item.querySelectorAll('form > table > tbody > tr');
+        var  orderDetails = new List<OrderDetail>();
+        for(int i=2;i<subItem.length;i++){
+          OrderDetail orderDetail = new OrderDetail();
+          orderDetail.price = double.parse(subItem[i].querySelectorAll('td')[2].nodes[0].text);
+          orderDetail.ticketStatus = subItem[i].querySelectorAll('td')[3].nodes[1].text;
+          orderDetail.orderId = int.parse(subItem[i].nodes[0].nodes[1].attributes['value']);
+          orderDetails.add(orderDetail);
+        }
+        order.orderDetails = orderDetails;
+        list.add(order);
+      }
+      pageResult.data = list;
+      return HttpResult.success(pageResult);
+    }on DioError catch(e){
+      print(e);
+      return HttpResult.error('获取订单列表失败');
+    }
+
+  }
   ///是否有未支付订单
   Future<bool> _havePayingOrder() async {
     Response response = await dio.get(HAVING_PAYING_ORDER_URL, queryParameters: {
@@ -31,7 +90,6 @@ class OrderService extends BaseService{
   ///锁定车票
   Future<HttpResult> _lockTicket(TicketModel ticketModel, List<Passenger> passengers, String contactName, String phone,String token, String captureCode) async {
     var para = new Map<String, dynamic> ();
-    //para['sdfgfgfg'] = 'on';
     para['contact_name'] = contactName;
     para['phone_num'] = phone;
     para['contact_card_num'] = '';
@@ -47,7 +105,7 @@ class OrderService extends BaseService{
     para['insurant_sum3'] = 0;
     para['insurant_sum4'] = 0;
 
-    //乘客信息
+    ///乘客信息
     for(int i=0; i<passengers.length; i++){
       para['passenger_ticket_type'+(i+1).toString()] = 0;
       para['passenger_card_type'+(i+1).toString()] = passengers[i].idType;
@@ -74,6 +132,8 @@ class OrderService extends BaseService{
     String orderId= referer.split('=')[1];
     return HttpResult.success(int.parse(orderId));
   }
+
+
   ///获取待支付的订单信息
   Future<HttpResult> getUnPayOrderDetail (int orderId) async {
     Response response = await dio.get(CHOOSE_PAY_WAY_URL, queryParameters: {
