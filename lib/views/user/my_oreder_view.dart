@@ -50,7 +50,7 @@ class _MyOrderViewStat extends State with SingleTickerProviderStateMixin {
       ),
       body: TabBarView(
           children: [
-            _Body(''),
+            _Body('all'),
             _Body('succeed'),
             _Body('pending'),
             _Body('backed'),
@@ -116,7 +116,9 @@ class _BodyStat extends State{
           if(totalCount != 0){
             _currentPage++;
             _orders.addAll(pageResult.data);
-            setState(() {});
+            if(mounted){
+              setState(() {});
+            }
           }
 
         }else{

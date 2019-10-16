@@ -17,6 +17,7 @@ class OrderService extends BaseService{
   Future<HttpResult> myOrderList(int currentPage, String orderStatus) async {
     try{
       Response response = await dio.get(MY_OREDER_LIST_URL, queryParameters: {
+        'startTime':'2000-10-09',
         'pageSize':20,
         'currentPage':currentPage,
         'orderState':orderStatus
@@ -28,9 +29,9 @@ class OrderService extends BaseService{
       int totalPage = int.parse(response.data.toString().substring(startIndex+'countPage = '.length, endIndex));
       var pageResult = new PageResult();
       pageResult.totalPage = totalPage;
-      startIndex = response.data.toString().indexOf('count = ');
+      startIndex = response.data.toString().indexOf('searchCount = ');
       endIndex = response.data.toString().indexOf(';', startIndex);
-      int totalCont = int.parse(response.data.toString().substring(startIndex+'count = '.length, endIndex));
+      int totalCont = int.parse(response.data.toString().substring(startIndex+'searchCount = '.length, endIndex));
       pageResult.totalCount = totalCont;
 
       ///获取数据
@@ -40,15 +41,15 @@ class OrderService extends BaseService{
         var order = new OrderList();
         order.payOrderId = int.parse(item.querySelectorAll(' form > table > tbody > tr > td >input')[0].attributes['value']);
         order.tradeNumber = item.querySelectorAll('form > table > tbody > tr > td')[1].nodes[2].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
-        order.departureTime = item.querySelectorAll('form > table > tbody > tr > td')[2].nodes[0].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll('发车时间: ', '');
+        order.departureTime = item.querySelectorAll('form > table > tbody > tr > td')[2].nodes[0].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll('发车时间:', '');
         order.price = double.parse(item.querySelectorAll('form > table > tbody > tr > td')[3].nodes[0].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll('总金额(元):', ''));
         order.fromStation = item.querySelectorAll('form > table > tbody > tr')[2].querySelectorAll('td')[1].nodes[0].text;
         order.targetStation = item.querySelectorAll('form > table > tbody > tr')[2].querySelectorAll('td')[1].nodes[2].text.replaceAll(' ', '');
-        if(item.querySelectorAll('form > table > tbody > tr > td')[5].nodes[1].nodes.length == 7){
-          //待支付，可用操作（支付，取消订单）
-          order.orderStatus = '待付款';
+        var e = item.querySelector('form > table > tbody > tr > td > div >font');
+        if(e != null){
+          order.orderStatus = e.text;
         }else{
-          order.orderStatus = item.querySelectorAll('form > table > tbody > tr > td')[5].nodes[1].nodes[1].text;
+          order.orderStatus = '待支付';
         }
         var subItem = item.querySelectorAll('form > table > tbody > tr');
         var  orderDetails = new List<OrderDetail>();
