@@ -158,6 +158,7 @@ class WaitingWidget extends StatelessWidget{
     return  Center(
       child: Container (
         height: 80,
+        width: 80,
         child: CircularProgressIndicator(),
       ),
     );

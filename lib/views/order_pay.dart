@@ -170,7 +170,7 @@ class _OrderPayingState extends State {
                 minWidth: 350,
                 child: isPay?Text('支付成功，返回'):Text('支付'),
                 onPressed: () async {
-                  if(!isPay){
+                  if(isPay){
                     Navigator.pop(context);
                   }else{
                     _gotoPay('alipay');

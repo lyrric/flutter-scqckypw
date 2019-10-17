@@ -35,13 +35,13 @@ class _State extends State{
     flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged data) {
       String url = data.url;
       print(url);
-      if(url.startsWith('alipay') || url.startsWith('tbopen')){
+      /*if(url.startsWith('alipay') || url.startsWith('tbopen')){
         _lunch(url);
       }
       if(url.indexOf('fontNotify.html') != -1){
         Fluttertoast.showToast(msg: '支付成功');
         Navigator.of(context).pop(true);
-      }
+      }*/
     });
   }
 

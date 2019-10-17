@@ -52,8 +52,7 @@ class OrderService extends BaseService{
         if(e != null){
           order.orderStatus = e.text;
         }else{
-          e = item.querySelector('form > table > tbody > tr > td > div > input');
-          if(e == null){
+          if(item.querySelectorAll('form > table > tbody > tr > td > div > input').length == 2){
             order.orderStatus = '待支付';
           }else{
             order.orderStatus = '待出行';
