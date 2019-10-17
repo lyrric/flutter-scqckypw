@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_scqckypw/model/order.dart';
 import 'package:flutter_scqckypw/model/page_result.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/model/pay_order_info.dart';
+import 'package:flutter_scqckypw/model/refund_info.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
 import 'package:flutter_scqckypw/service/base_service.dart';
 import 'package:html/parser.dart' show parse;
@@ -16,7 +19,7 @@ class OrderService extends BaseService{
   ///我的订单列表
   Future<HttpResult> myOrderList(int currentPage, String orderStatus) async {
     try{
-      Response response = await dio.get(MY_OREDER_LIST_URL, queryParameters: {
+      Response response = await dio.get(MY_ORDER_LIST_URL, queryParameters: {
         'startTime':'2000-10-09',
         'pageSize':20,
         'currentPage':currentPage,
@@ -49,7 +52,13 @@ class OrderService extends BaseService{
         if(e != null){
           order.orderStatus = e.text;
         }else{
-          order.orderStatus = '待支付';
+          e = item.querySelector('form > table > tbody > tr > td > div > input');
+          if(e == null){
+            order.orderStatus = '待支付';
+          }else{
+            order.orderStatus = '待出行';
+          }
+
         }
         var subItem = item.querySelectorAll('form > table > tbody > tr');
         var  orderDetails = new List<OrderDetail>();
@@ -71,6 +80,49 @@ class OrderService extends BaseService{
     }
 
   }
+  ///取消订单
+  Future<HttpResult> cancel(int payOrderId) async {
+    try{
+      Response response = await dio.get(CANCEL_ORDER_URL, queryParameters: {
+        'payOrderId':payOrderId.toString()
+      });
+      Map map = json.decode(response.data);
+      if(map['success']){
+        return HttpResult.success(null);
+      }
+      return HttpResult.error('取消失败');
+    }on DioError catch(e){
+      print(e);
+      return HttpResult.error('取消失败');
+    }
+  }
+  ///退款页面信息
+  Future<HttpResult> getRefundPageInfo(String ticketIds, int payOrderId) async {
+    try{
+      Response response = await dio.get(CANCEL_ORDER_URL, queryParameters: {
+        'ticket_ids':ticketIds,
+        'payorder_id':payOrderId,
+      });
+      String html = response.data;
+      int startIndex = html.indexOf('ticket = ');
+      if(startIndex == -1){
+        return HttpResult.error('获取数据失败');
+      }
+      int endIndex = html.indexOf(';');
+      String jsonStr = html.substring(startIndex+'ticket = '.length, endIndex);
+      Map map = json.decode(jsonStr);
+      List<RefundInfo> list = new List();
+      for(int i = 0;i<map.length;i++){
+        RefundInfo refundInfo = RefundInfo.fromJson(map[i]);
+        list.add(refundInfo);
+      }
+      return HttpResult.success(list);
+    }on DioError catch(e){
+      print(e);
+      return HttpResult.error('获取数据失败');
+    }
+  }
+
   ///是否有未支付订单
   Future<bool> _havePayingOrder() async {
     Response response = await dio.get(HAVING_PAYING_ORDER_URL, queryParameters: {
@@ -137,9 +189,15 @@ class OrderService extends BaseService{
 
   ///获取待支付的订单信息
   Future<HttpResult> getUnPayOrderDetail (int orderId) async {
-    Response response = await dio.get(CHOOSE_PAY_WAY_URL, queryParameters: {
-      'pay_order_id':orderId
-    });
+    Response response;
+    try{
+      response = await dio.get(CHOOSE_PAY_WAY_URL, queryParameters: {
+        'pay_order_id':orderId
+      });
+    }on DioError catch(e){
+      print(e);
+      return HttpResult.error('车票已过期 请重新购票');
+    }
     var document = parse(response.data);
     var list = document.querySelectorAll('#rnbox4');
     List<PayOrderInfo> data = new List();

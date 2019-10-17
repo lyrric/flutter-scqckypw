@@ -4,8 +4,10 @@ import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/model/pay_order_info.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
-import 'package:flutter_scqckypw/views/pay_web_view.dart';
+import 'package:flutter_scqckypw/views/pay_web_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import 'common_view.dart';
 
 class OrderPayingView extends StatefulWidget{
 
@@ -31,6 +33,7 @@ class _OrderPayingState extends State {
 
   final int orderId;
 
+  bool isPay = false;
 
   _OrderPayingState(this.orderId){
     _orderService.getUnPayOrderDetail(orderId).then((HttpResult result){
@@ -54,7 +57,7 @@ class _OrderPayingState extends State {
       appBar: new AppBar(
         title: Text('订单详情'),
       ),
-      body:   _orderInfo==null? _waitingWidget():Container(
+      body:   _orderInfo==null? WaitingWidget():Container(
         padding: EdgeInsets.only(left: 5, right: 5),
         child: ListView(
           children: <Widget>[
@@ -165,9 +168,13 @@ class _OrderPayingState extends State {
                 textColor: Colors.white,
                 height: 40,
                 minWidth: 350,
-                child: Text('支付'),
+                child: isPay?Text('支付成功，返回'):Text('支付'),
                 onPressed: () async {
-                  _gotoPay('alipay');
+                  if(!isPay){
+                    Navigator.pop(context);
+                  }else{
+                    _gotoPay('alipay');
+                  }
                 }
               ),
             ),
@@ -179,9 +186,16 @@ class _OrderPayingState extends State {
 
   ///去支付
   _gotoPay(String payWay) async {
-    Navigator.of(context).push(new MaterialPageRoute(builder: (_){
-      return new PayWebView(PAY_MIDDLE_URL+'?payid='+orderId.toString()+'&plateform='+payWay);
-    }));
+     showDialog(context: context, builder: (_){
+       return new PayWebDialog(PAY_MIDDLE_URL+'?payid='+orderId.toString()+'&plateform='+payWay);
+     }).then((result){
+       if(result != null && result){
+         //付款成功
+         setState(() {
+           isPay = true;
+         });
+       }
+     });
   }
 
   ///乘客
@@ -205,16 +219,6 @@ class _OrderPayingState extends State {
     );
   }
 
-  ///等待
-  Widget _waitingWidget(){
-    return Container(
-      width: 300,
-      height: 400,
-      child: Center(
-        child:  CircularProgressIndicator(),
-      ),
-    );
-  }
 }
 
 ///已选择的乘客item

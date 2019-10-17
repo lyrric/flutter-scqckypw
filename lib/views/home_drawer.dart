@@ -5,7 +5,7 @@ import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/service/user_service.dart';
 import 'package:flutter_scqckypw/views/login.dart';
 import 'package:flutter_scqckypw/views/passenger/passenger_mgr.dart';
-import 'package:flutter_scqckypw/views/user/my_oreder_view.dart';
+import 'package:flutter_scqckypw/views/user/my_oreder_list_view.dart';
 import 'package:flutter_scqckypw/views/user/user_center.dart';
 
 ///首页侧边栏
@@ -40,7 +40,7 @@ class HomeDrawerWidget extends StatelessWidget{
             title: new Text("我的订单"),
             onTap: (){
               Navigator.of(context).push(new MaterialPageRoute(builder: (_){
-                return new MyOrderView();
+                return new MyOrderListView();
               }));
             },
           ),

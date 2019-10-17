@@ -36,5 +36,10 @@ const String CHOOSE_PAY_WAY_URL = BASE_URL + '/ticketOrder/redirectOrder.html';
 ///付款中间页面Url
 const String PAY_MIDDLE_URL = BASE_URL + '/ticketOrder/middlePay.html';//https://www.scqckypw.com/ticketOrder/middlePay.html?payid=50319021&plateform=alipay
 ///我的订单Url
-const String MY_OREDER_LIST_URL = BASE_URL + '/user/order/searchOrder';
-
+const String MY_ORDER_LIST_URL = BASE_URL + '/user/order/searchOrder';
+///取消订单Url
+const String CANCEL_ORDER_URL = BASE_URL + '/ticketOrder/cancel';
+///退款订单页面Url
+const String REFUND_ORDER_PAGE_URL = BASE_URL + '/cancelticket/requestRetTicket.html';
+///退款订单接口Url
+const String REFUND_ORDER_URL = BASE_URL + '/cancelticket/requestRetTicket.html';

@@ -4,23 +4,26 @@ import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/model/order.dart';
 import 'package:flutter_scqckypw/model/page_result.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
+import 'package:flutter_scqckypw/views/order_pay.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../common_view.dart';
 
 
 ///我的订单
-class MyOrderView extends StatefulWidget{
+class MyOrderListView extends StatefulWidget{
 
   @override
   State createState() {
-    return _MyOrderViewStat();
+    return _MyOrderListViewStat();
   }
 }
 
-class _MyOrderViewStat extends State with SingleTickerProviderStateMixin {
+class _MyOrderListViewStat extends State with SingleTickerProviderStateMixin {
 
   TabController tabCtrl;
 
-  _MyOrderViewStat(){
+  _MyOrderListViewStat(){
     tabCtrl = TabController(length: 4, vsync: this);
   }
 
@@ -127,11 +130,51 @@ class _BodyStat extends State{
       });
     }
   }
+
+  ///去支付
   void _onPay(int payOrderId){
-
+    Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+      return new OrderPayingView(payOrderId);
+    }));
   }
-  void _onCancel(int payOrderId){
 
+  ///取消订单
+  void _onCancel(int payOrderId){
+    showDialog(context: context,builder: (content){
+      return new YesNoDialog('确定取消吗？', context);
+    }).then((val){
+      if(val != null && val){
+        _orderService.cancel(payOrderId).then((httpResult){
+          if(httpResult.success){
+            Fluttertoast.showToast(msg: '取消成功');
+            setState(() {
+              _orders.singleWhere((e)=>e.payOrderId == payOrderId).orderStatus = '订单过期';
+            });
+          }else{
+            Fluttertoast.showToast(msg: httpResult.errMsg);
+          }
+        });
+      }
+    });
+  }
+  ///退款
+  void _refund(int payOrderId){
+    showDialog(context: context,builder: (content){
+      return new YesNoDialog('确定退款吗？', context);
+    }).then((val){
+      if(val != null && val){
+        _orderService.cancel(payOrderId).then((httpResult){
+          if(httpResult.success){
+            Fluttertoast.showToast(msg: '退款成功');
+            setState(() {
+              _orders.singleWhere((e)=>e.payOrderId == payOrderId).orderStatus = '已退款';
+            });
+          }else{
+            Fluttertoast.showToast(msg: httpResult.errMsg);
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -191,14 +234,16 @@ class _OrderItem extends StatelessWidget{
   final Function(int payOrderId) onPay;
   ///取消按钮事件
   final Function(int payOrderId) onCancel;
+  ///退款事件
+  final Function(int payOrderId) refund;
 
-  _OrderItem(this._order, {this.onPay, this.onCancel});
+  _OrderItem(this._order, {this.onPay, this.onCancel, this.refund});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.only(top: 5, left: 10, right: 10),
+      padding: EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 5),
       child: Column(
         children: <Widget>[
           Container(
@@ -218,11 +263,10 @@ class _OrderItem extends StatelessWidget{
                 width: 20,
               ),
               Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
-                child: Image.asset('images/order_list.jpg', height: 50,),
+                child: Image.asset('images/order_list.jpg', height: 45,),
               ),
               Container(
-                height: 70,
+                height: 60,
                 child:  Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -259,24 +303,36 @@ class _OrderItem extends StatelessWidget{
 
   ///订单按钮
   Widget orderButton(){
-    if(_order.orderStatus == '交易成功' ||_order.orderStatus == '订单过期'){
-      return Text('');
-    }else{
+    if(_order.orderStatus == '待支付'){
       return Container(
         child: Row(
           children: <Widget>[
             FlatButton(
-              child: Text('支付'),
-              onPressed: onPay(_order.payOrderId),
+              color: Colors.blue,
+              child: Text('支付', style: TextStyle(color: Colors.white),),
+              onPressed: (){onPay(_order.payOrderId);},
+            ),
+            Container(
+              width: 10,
             ),
             FlatButton(
-              child: Text('取消'),
-              onPressed: onCancel(_order.payOrderId),
+              color: Colors.blue,
+              child: Text('取消', style: TextStyle(color: Colors.white),),
+              onPressed: (){onCancel(_order.payOrderId);},
             )
           ],
         ),
       );
+    }else if (_order.orderStatus == '待出行'){
+      return Container(
+        child: FlatButton(
+          color: Colors.blue,
+          child: Text('退票', style: TextStyle(color: Colors.white),),
+          onPressed: (){refund(_order.payOrderId);},
+        ),
+      );
+    }else{
+     return Text('');
     }
-
   }
 }

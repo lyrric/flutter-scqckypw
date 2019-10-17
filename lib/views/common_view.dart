@@ -151,4 +151,15 @@ class _CaptureCodeState extends State{
         ]);
   }
 }
-
+///等待
+class WaitingWidget extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return  Center(
+      child: Container (
+        height: 80,
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}

@@ -3,15 +3,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 ///付款pay webview
-class PayWebView extends StatefulWidget{
+class PayWebDialog extends StatefulWidget{
 
   final String initialUrl;
 
 
-  PayWebView(this.initialUrl);
+  PayWebDialog(this.initialUrl);
 
   @override
   State createState() {
@@ -28,19 +29,25 @@ class _State extends State{
 
   final flutterWebviewPlugin = new FlutterWebviewPlugin();
 
+  var webview;
+
   _State(this.initialUrl){
     flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged data) {
       String url = data.url;
+      print(url);
       if(url.startsWith('alipay') || url.startsWith('tbopen')){
         _lunch(url);
+      }
+      if(url.indexOf('fontNotify.html') != -1){
+        Fluttertoast.showToast(msg: '支付成功');
+        Navigator.of(context).pop(true);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print(Data.cookie);
-    return WebviewScaffold(
+    webview =  WebviewScaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(_title),
@@ -52,37 +59,34 @@ class _State extends State{
         'Connection':'keep-alive',
         'Upgrade-Insecure-Requests':'1'
       },
+      hidden: true,
       enableAppScheme:true,
       withZoom: true,
       withLocalStorage: true,
-      hidden: true,
       initialChild: Container(
         child: const Center(
           child: CircularProgressIndicator(),
         ),
       ),
     );
-  /*  return Scaffold(
-      appBar: AppBar(
-        title: Text(_title),
-      ),
-      body: WebView(
-        onWebViewCreated: (ctrl){
-          ctrl.loadUrl('http://baidu.com', headers:{
-            'Cookie':Data.cookie
-          });
-
-        },
-        javascriptMode:JavascriptMode.unrestricted,
-        navigationDelegate: (NavigationRequest request){
-          if(request.url.startsWith('alipay')){
-            _lunch(request.url);
-            return NavigationDecision.prevent;
-          }
-          return NavigationDecision.navigate;
-        },
-      ),
-    );*/
+    return Center(
+          child: Container (
+            height: 100,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 0,
+                  child: webview,
+                ),
+                Container(
+                  width: 80,
+                  height: 80,
+                  child:  CircularProgressIndicator(),
+                ),
+              ],
+            ),
+          ),
+        );
   }
 
   Future _lunch(String url) async {
