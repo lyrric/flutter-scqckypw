@@ -1,11 +1,12 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_scqckypw/data_util.dart';
+import 'package:flutter_scqckypw/util/data_util.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/service/passenger_service.dart';
 import 'package:flutter_scqckypw/views/passenger/passenger_add.dart';
 import 'package:flutter_scqckypw/views/passenger/passenger_edit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../common_view.dart';
 
@@ -27,10 +28,15 @@ class _PassengerMgrState extends State<PassengerMgrView> {
   List<Passenger> _passengers;
 
   void _initPassenger(){
-    _passengerService.getPassengers(1).then((data){
-      setState(() {
-        _passengers = data;
-      });
+    _passengerService.getPassengers(1).then((httpResult){
+      if(httpResult.success){
+        setState(() {
+          _passengers = httpResult.data;
+        });
+      }else{
+        Fluttertoast.showToast(msg: httpResult.errMsg);
+      }
+
     });
   }
   @override

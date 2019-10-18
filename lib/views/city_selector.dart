@@ -20,16 +20,14 @@ class _CitySelectorState extends State<CitySelector>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(
-        title: new Text('选择地区'),
+      appBar: AppBar(
+        title: Text('选择地区'),
         centerTitle: true,
       ),
       body: ListView.builder(
           itemCount: _cityList.length,
           itemBuilder: (context, index){
-            if(_cityList.length >= index){
-              return _CityListItem(_cityList[index]);
-            }
+            return _CityListItem(_cityList[index]);
           }
       ),
     );
@@ -52,14 +50,14 @@ class _CityListItem extends StatelessWidget{
   Widget unSelectableWidget(){
     return Container(
       height: 40,
-      decoration: new BoxDecoration(color:Colors.black12),
-        child:new Column(
+      decoration: BoxDecoration(color:Colors.black12),
+        child:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            new Container(
+            Container(
               margin: EdgeInsets.only(left: 10),
-              child: new Text(_cityModel.name, style: new TextStyle(fontSize: 14),)
+              child: Text(_cityModel.name, style: TextStyle(fontSize: 14),)
             ),
           ],
     ));
@@ -67,14 +65,14 @@ class _CityListItem extends StatelessWidget{
   //可选择的城市
   Widget selectableWidget(){
     return Container(
-      decoration: new BoxDecoration(color:Colors.white),
-      child: new Column(
+      decoration: BoxDecoration(color:Colors.white),
+      child: Column(
         children: <Widget>[
-          new Container(
+          Container(
             height: 40,
-            child: new ListTile(
+            child: ListTile(
               contentPadding: EdgeInsets.only(left: 10, top: 0,bottom: 0),
-              title: new Text(_cityModel.name, style: new TextStyle(fontSize: 16)),
+              title: Text(_cityModel.name, style: TextStyle(fontSize: 16)),
               onTap: (){
                 Navigator.pop(_context, _cityModel);
               },

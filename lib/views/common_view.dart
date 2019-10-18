@@ -16,11 +16,11 @@ class YesNoDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new AlertDialog(
-        title: new Text("提示"),
-        content: new Text(title),
+    return AlertDialog(
+        title: Text("提示"),
+        content: Text(title),
         actions: <Widget>[
-          new FlatButton(
+          FlatButton(
             child: Row(
               children: <Widget>[
                 Icon(Icons.check, color: Colors.green,),
@@ -31,7 +31,7 @@ class YesNoDialog extends StatelessWidget {
               Navigator.of(context).pop(true);
             },
           ),
-          new FlatButton(
+          FlatButton(
             child: Row(
               children: <Widget>[
                 Icon(Icons.cancel, color: Colors.red,),
@@ -66,8 +66,8 @@ class _CaptureCodeState extends State{
 
   final pContent;
 
-  var ctrl = new TextEditingController();
-  var commonService = new CommonService();
+  var ctrl = TextEditingController();
+  var commonService = CommonService();
   //验证码数据
   Uint8List captureBytes;
 
@@ -86,11 +86,11 @@ class _CaptureCodeState extends State{
 
   @override
   Widget build(BuildContext context) {
-    return new AlertDialog(
-        title: new Text("请输入验证码"),
-        content:  new Row(
+    return AlertDialog(
+        title: Text("请输入验证码"),
+        content:  Row(
           children: <Widget>[
-            new Container(
+            Container(
               height: 100,
               width: 150,
               child:  TextFormField(
@@ -102,11 +102,11 @@ class _CaptureCodeState extends State{
                 ),
               ),
             ),
-            new Container(
+            Container(
                 height: 100,
                 width: 100,
                 child: captureBytes==null?Center(child: CircularProgressIndicator(), ):
-                new FlatButton(
+                FlatButton(
                   child: Image.memory(captureBytes,width: 100,height:50, fit: BoxFit.fill,),
                   onPressed: (){
                     _initCapture();
@@ -115,7 +115,7 @@ class _CaptureCodeState extends State{
           ],
         ),
         actions: <Widget>[
-          new FlatButton(
+          FlatButton(
             child: Row(
               children: <Widget>[
                 Icon(Icons.check, color: Colors.green,),
@@ -137,7 +137,7 @@ class _CaptureCodeState extends State{
 
             },
           ),
-          new FlatButton(
+          FlatButton(
             child: Row(
               children: <Widget>[
                 Icon(Icons.cancel, color: Colors.red,),
@@ -152,15 +152,71 @@ class _CaptureCodeState extends State{
   }
 }
 ///等待
-class WaitingWidget extends StatelessWidget{
+class LoadingDialog extends StatelessWidget{
+
+  String text = '获取数据中...';
+
+  LoadingDialog({Key key, this.text}) : super(key: key);
+
   @override
   Widget build(BuildContext context){
-    return  Center(
-      child: Container (
-        height: 80,
-        width: 80,
-        child: CircularProgressIndicator(),
+    return Material( //创建透明层
+      type: MaterialType.transparency, //透明类型
+      child: Center( //保证控件居中效果
+        child: SizedBox(
+          width: 120.0,
+          height: 120.0,
+          child: Container(
+            decoration: ShapeDecoration(
+              color: Color(0xffffffff),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ),
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 20.0,
+                  ),
+                  child: Text(
+                    text,
+                    style: TextStyle(fontSize: 12.0),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
+    );
+  }
+}
+
+///提示框
+class SuccessDialog extends StatelessWidget{
+
+  final String _text;
+
+  SuccessDialog(this._text);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(_text),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('确定'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
     );
   }
 }

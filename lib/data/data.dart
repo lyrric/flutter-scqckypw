@@ -38,6 +38,10 @@ class Data{
   }
 
 
+  static void logout(){
+    cookie = '';
+    user = _defaultUser;
+  }
 }
 
 

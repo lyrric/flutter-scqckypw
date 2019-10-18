@@ -1,6 +1,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter_scqckypw/data/data.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class DioInterceptor extends InterceptorsWrapper{
 
@@ -33,7 +34,13 @@ class DioInterceptor extends InterceptorsWrapper{
         print('cookies='+cookiesStr);
         Data.cookie = cookiesStr;
       }
-
+    }
+    var data = response.data;
+    if(data is String){
+      if(data.indexOf('parent.location.href') != -1){
+        Data.logout();
+        Fluttertoast.showToast(msg: '登录过期，请重新登陆');
+      }
     }
     return response;
   }

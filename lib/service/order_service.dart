@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/model/order.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_scqckypw/model/pay_order_info.dart';
 import 'package:flutter_scqckypw/model/refund_info.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
 import 'package:flutter_scqckypw/service/base_service.dart';
+import 'package:flutter_scqckypw/util/data_util.dart';
 import 'package:html/parser.dart' show parse;
 
 ///订单
@@ -25,6 +27,10 @@ class OrderService extends BaseService{
         'currentPage':currentPage,
         'orderState':orderStatus
       });
+      if(!isLogin(response)){
+        Data.logout();
+        return HttpResult.error('登陆信息失效，请重新登陆');
+      }
       var document = parse(response.data);
       ///获取总页数，和数据总数
       int startIndex = response.data.toString().indexOf('countPage = ');
@@ -72,7 +78,7 @@ class OrderService extends BaseService{
         list.add(order);
       }
       pageResult.data = list;
-      return HttpResult.success(pageResult);
+      return HttpResult.success(data:pageResult);
     }on DioError catch(e){
       print(e);
       return HttpResult.error('获取订单列表失败');
@@ -87,7 +93,7 @@ class OrderService extends BaseService{
       });
       Map map = json.decode(response.data);
       if(map['success']){
-        return HttpResult.success(null);
+        return HttpResult.success();
       }
       return HttpResult.error('取消失败');
     }on DioError catch(e){
@@ -115,7 +121,7 @@ class OrderService extends BaseService{
         RefundInfo refundInfo = RefundInfo.fromJson(map[i]);
         list.add(refundInfo);
       }
-      return HttpResult.success(list);
+      return HttpResult.success(data:list);
     }on DioError catch(e){
       print(e);
       return HttpResult.error('获取数据失败');
@@ -182,7 +188,7 @@ class OrderService extends BaseService{
       return HttpResult.error('锁定车票失败');
     }
     String orderId= referer.split('=')[1];
-    return HttpResult.success(int.parse(orderId));
+    return HttpResult.success(data:int.parse(orderId));
   }
 
 
@@ -211,7 +217,7 @@ class OrderService extends BaseService{
       payOrderInfo.idNumber = document.querySelectorAll('#box3 > div.em_lst > ul > li.c3')[i].text.replaceAll('\n', '').replaceAll('\t', '');
       data.add(payOrderInfo);
     }
-    return HttpResult.success(data);
+    return HttpResult.success(data:data);
   }
 
   ///获取待付款订单的数据
@@ -288,6 +294,6 @@ class OrderService extends BaseService{
         return HttpResult.error('请求失败');
       }
     }
-    return HttpResult.success(response.headers.value('Location'));
+    return HttpResult.success(data:response.headers.value('Location'));
   }
 }

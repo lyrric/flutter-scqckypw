@@ -7,7 +7,7 @@ class HttpResult {
 
   HttpResult();
 
-  factory HttpResult.success(dynamic data){
+  factory HttpResult.success({dynamic data}){
     return new HttpResult()
         ..success = true
         ..data = data;

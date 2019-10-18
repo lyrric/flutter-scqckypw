@@ -291,7 +291,7 @@ class _OrderItem extends StatelessWidget{
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(_order.orderStatus),
+                  Text(_order.orderStatus, style: TextStyle(color: Colors.blue),),
                   orderButton(),
                 ],
               ),

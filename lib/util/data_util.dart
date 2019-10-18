@@ -1,5 +1,7 @@
 
 //转换身份类型,身份证->id_card
+import 'package:dio/dio.dart';
+
 String convertIdTypeByText(String text){
   switch(text){
     case '身份证':
@@ -24,4 +26,8 @@ String convertIdTypeByVal(String val){
     default:
       return '身份证';
   }
+}
+///根据response判断是登陆
+bool isLogin(Response response){
+  return response.data.toString().indexOf('parent.location.href') == -1;
 }

@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
+import 'package:flutter_scqckypw/views/common_view.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
 import 'package:flutter_scqckypw/views/order_pay.dart';
 import 'package:flutter_scqckypw/views/target_city_selector_.dart';
@@ -51,8 +52,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      drawer: new Drawer(
-        child: new HomeDrawerWidget(),
+      drawer: Drawer(
+        child: HomeDrawerWidget(),
       ),
       backgroundColor:  Color(0xF0FFFFFF),
       body: _Body(context)
@@ -68,10 +69,10 @@ class _Body extends StatefulWidget{
 
   _Body(this._topContext);
 
-  OrderService orderService = new OrderService();
+  OrderService orderService = OrderService();
   @override
   State createState() {
-    return new _BodyState(_topContext);
+    return _BodyState(_topContext);
   }
 
 
@@ -83,11 +84,9 @@ class _BodyState extends State<_Body>{
   CityModel _fromCity = CityModel.of(255,'成都市');
   //目标城市
   CityModel _targetCity = CityModel.of(325,'宜宾');
-  //处罚日期
+  //出发日期
   DateTime _date = DateTime.now();
 
-  OrderService orderService = new OrderService();
-  
   BuildContext _topContext;
 
   _BodyState(this._topContext);
@@ -96,27 +95,27 @@ class _BodyState extends State<_Body>{
   Widget build(BuildContext context) {
     return Container(
         height: 200,
-        decoration:  new BoxDecoration(
+        decoration:  BoxDecoration(
           color: Colors.white, // 底色
         ),
-        child:  new Container(
+        child:  Container(
           margin: EdgeInsets.only(left: 20, top: 20, right: 20),
           child:  Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              new Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  new Container(
+                  Container(
                     width: 100,
-                    child:  new Column(
+                    child:  Column(
                       children: <Widget>[
-                        new FlatButton(
-                          child: new Text(_fromCity.name, style: new TextStyle(fontSize: 22),),
+                        FlatButton(
+                          child: Text(_fromCity.name, style: TextStyle(fontSize: 22),),
                           onPressed: () {
-                            Navigator.of(_topContext).push(new MaterialPageRoute(builder:
-                                (_){ return new CitySelector();}
+                            Navigator.of(_topContext).push(MaterialPageRoute(builder:
+                                (_){ return CitySelector();}
                             )
                             ).then((city){
                               if(city != null) {
@@ -131,23 +130,24 @@ class _BodyState extends State<_Body>{
                       ],
                     ),
                   ),
-                  new Container(
+                  Container(
                     margin: EdgeInsets.only(left: 40, right: 50),
-                    child: new Icon(Icons.arrow_forward),
+                    child: Icon(Icons.arrow_forward),
                   ),
-                  new Container(
+                  Container(
                     width: 100,
-                    child:  new Column(
+                    child:  Column(
                       children: <Widget>[
-                        new FlatButton(
-                          child: new Text(_targetCity.name, style: new TextStyle(fontSize: 22),),
+                        FlatButton(
+                          child: Text(_targetCity.name, style: TextStyle(fontSize: 22),),
                           onPressed: () {
-                            showSearch(context: _topContext, delegate: new TargetCitySelector(_fromCity.id, this))
+                            showSearch(context: _topContext, delegate: TargetCitySelector(_fromCity.id, this))
                               .then((city){
-                                _targetCity = CityModel.of(city.id,city.name);
-                                setState(() {
-
-                                });
+                                if(city != null){
+                                  _targetCity = CityModel.of(city.id,city.name);
+                                  setState(() {
+                                  });
+                                }
                             });
                           }
                         ),
@@ -157,15 +157,15 @@ class _BodyState extends State<_Body>{
                   ),
                 ],
               ),
-              new Container(
+              Container(
                 margin: EdgeInsets.only(top: 0.0),
-                child: new FlatButton(
-                  child: new Text(_getShowDate(), style: new TextStyle(fontSize: 14),),
+                child: FlatButton(
+                  child: Text(_getShowDate(), style: TextStyle(fontSize: 14),),
                   onPressed: () {
                     showDatePicker(
                       locale: Locale.fromSubtags(languageCode: 'zh'),
                       context: context,
-                      lastDate: DateTime.now().add(new Duration(days: 15)),
+                      lastDate: DateTime.now().add(Duration(days: 15)),
                       firstDate: _date,
                       initialDate: _date
                     ).then((date){
@@ -178,7 +178,7 @@ class _BodyState extends State<_Body>{
                   },
                 ),
               ),
-              new Container(
+              Container(
                 alignment: Alignment.center,
                 child: MaterialButton(
                   color: Colors.blue,
@@ -186,10 +186,10 @@ class _BodyState extends State<_Body>{
                   minWidth: 350,
                   child: Text('查询'),
                   onPressed: (){
-                    Navigator.of(_topContext).push(new MaterialPageRoute(builder: (_){
-                      return new TicketListView(_fromCity, _targetCity, _getDateString());
-                      //return new PayWebView('https://www.scqckypw.com/user/index.html');
-                      //return new OrderPayingView(sssssss);
+                    Navigator.of(_topContext).push(MaterialPageRoute(builder: (_){
+                      return TicketListView(_fromCity, _targetCity, _getDateString());
+                      //return PayWebView('https://www.scqckypw.com/user/index.html');
+                      //return OrderPayingView(sssssss);
                     }));
                   },
                 ),

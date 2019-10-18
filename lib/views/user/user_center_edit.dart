@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_scqckypw/data_util.dart';
+import 'package:flutter_scqckypw/util/data_util.dart';
 import 'package:flutter_scqckypw/service/user_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../common_view.dart';
 
 class UserCenterEditView extends StatelessWidget{
 
@@ -177,15 +179,17 @@ class _BodyState extends State<_Body>{
             textColor: Colors.white,
             child: Text('保存'),
             onPressed: (){
+                showDialog(context: context, builder: (_){
+                  return new LoadingDialog(text:'保存中...');
+                });
                 _userService.updateInfo(_realName, _sex, _idType, _idNo)
-                    .then((result){
-                      if(result.isEmpty){
-                        Fluttertoast.showToast(msg: '保存成功')
-                            .then((_){
-                              Navigator.of(context).pop(true);
-                        });
+                    .then((httpResult){
+                      if(httpResult.success){
+                        Navigator.pop(context);
+                        Fluttertoast.showToast(msg: '保存成功');
+                        Navigator.of(context).pop(true);
                       }else{
-                        Fluttertoast.showToast(msg: result);
+                        Fluttertoast.showToast(msg: httpResult.errMsg);
                       }
                 });
             },

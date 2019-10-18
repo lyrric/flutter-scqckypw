@@ -4,15 +4,21 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
+import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/model/user_model.dart';
 import 'package:flutter_scqckypw/service/base_service.dart';
+import 'package:flutter_scqckypw/util/data_util.dart';
 import 'package:html/parser.dart' show parse;
 
 class UserService extends BaseService{
   
   ///获取用户基本信息
-  Future<UserModel> getUser() async {
+  Future<HttpResult> getUser() async {
     Response response = await dio.get(USER_CENTER_URL);
+    if(!isLogin(response)){
+      Data.logout();
+      return HttpResult.error('登陆信息失效，请重新登陆');
+    }
     String html = response.data;
     var document = parse(html);
     UserModel user =  UserModel.emptyUser();
@@ -33,11 +39,11 @@ class UserService extends BaseService{
     email = email == '空'?'未绑定邮箱':email;
     user.email = email;
     Data.user = user;
-    return user;
+    return HttpResult.success(data: user);
   }
 
   ///更新用户
-  Future<String> updateInfo(String realName, String sex, String idType, String idNo) async {
+  Future<HttpResult> updateInfo(String realName, String sex, String idType, String idNo) async {
     Response response = await dio.post(USER_UPDATE_URL
         ,queryParameters:{
         'name':realName,
@@ -47,9 +53,9 @@ class UserService extends BaseService{
       });
     Map<String, dynamic> map = json.decode(response.data);
     if(map['success']){
-      return '';
+      return HttpResult.success();
     }else{
-      return map['msg'];
+      return HttpResult.error(map['msg']);
     }
   }
 }

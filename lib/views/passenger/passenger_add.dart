@@ -159,9 +159,9 @@ class _PassengerAddState extends State{
               onPressed: (){
                 _passenger.realName = _nameCtrl.text;
                 _passenger.idNumber = _idNoCtrl.text;
-                _passengerService.add(_passenger).then((res){
-                  if(res.isNotEmpty){
-                    Fluttertoast.showToast(msg: res);
+                _passengerService.add(_passenger).then((httpResult){
+                  if(!httpResult.success){
+                    Fluttertoast.showToast(msg: httpResult.errMsg);
                   }else{
                     Fluttertoast.showToast(msg: '保存成功').then((_){
                       Navigator.of(context).pop(true);

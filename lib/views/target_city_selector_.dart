@@ -10,9 +10,9 @@ class TargetCitySelector extends SearchDelegate<TargetCityModel> {
   //出发车站
   int _fromCityId;
 
-  List<TargetCityModel> _targetCityList = new List();
+  List<TargetCityModel> _targetCityList = List();
 
-  CityService cityService = new CityService();
+  CityService cityService = CityService();
 
   State state;
 
@@ -69,7 +69,7 @@ class TargetCitySelector extends SearchDelegate<TargetCityModel> {
           future:cityService.getTargetCityList(_fromCityId, query)
       );
     }else{
-      return new Text('');
+      return Text('');
     }
   }
 
@@ -92,7 +92,7 @@ class TargetCitySelector extends SearchDelegate<TargetCityModel> {
     return ListView.builder(
         itemCount: _targetCityList.length,
         itemBuilder: (context, index) => ListTile(
-          title: new Text(_targetCityList[index].name),
+          title: Text(_targetCityList[index].name),
           onTap: (){
             close(context, _targetCityList[index]);
           },

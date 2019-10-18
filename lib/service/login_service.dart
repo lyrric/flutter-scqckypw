@@ -4,12 +4,13 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
+import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/service/base_service.dart';
 
 class LoginService extends BaseService{
 
   ///登陆
-  Future<String> login(String username, String password, String captureCode) async {
+  Future<HttpResult> login(String username, String password, String captureCode) async {
     //获取登陆页面html内容，解析token值
     Response response = await dio.get(LOGIN_PAGE_URL,  options: new Options(
         headers: { 'cookie':Data.cookie,},
@@ -19,7 +20,7 @@ class LoginService extends BaseService{
     int start = html.indexOf('name="csrfmiddlewaretoken" value="');
     int end = html.indexOf('"',start+'name="csrfmiddlewaretoken" value="'.length);
     if(end == -1 || start == -1){
-      return "解析Token失败";
+      return HttpResult.error('解析Token失败');
     }
     String token = html.substring(start+'name="csrfmiddlewaretoken" value="'.length, end);
     response = await dio.post(LOGIN_URL,
@@ -38,9 +39,9 @@ class LoginService extends BaseService{
     );
     Map<String, dynamic> map = json.decode(response.data);
     if(map['success']){
-      return '';
+      return HttpResult.success();
     }else{
-      return map['msg'];
+      return HttpResult.error(map['msg']);
     }
   }
 }

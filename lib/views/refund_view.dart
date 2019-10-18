@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/model/refund_info.dart';
+import 'package:flutter_scqckypw/service/order_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'common_view.dart';
 
@@ -25,7 +27,17 @@ class _RefundStat extends State{
 
   List<RefundInfo> refundInfoList;
 
-  _RefundStat(this.payOrderId, this.ticketIds);
+  var orderService = OrderService();
+
+  _RefundStat(this.payOrderId, this.ticketIds){
+    orderService.getRefundPageInfo(ticketIds, payOrderId).then((result){
+      if(result.success){
+        refundInfoList = result.data;
+      }else{
+        Fluttertoast.showToast(msg: result.errMsg);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,52 +46,52 @@ class _RefundStat extends State{
         centerTitle: true,
         title: Text('退款'),
       ),
-      body: refundInfoList == null?WaitingWidget():
+      body: refundInfoList == null?LoadingDialog():
          Container(
            padding: EdgeInsets.all(5),
            child: Column(
              children: <Widget>[
                Container(
-                 decoration:  new BoxDecoration(
+                 decoration:  BoxDecoration(
                    color: Colors.white, // 底色
                  ),
-                 child: new Column(
+                 child: Column(
                    children: <Widget>[
-                     new Container(
-                       decoration:  new BoxDecoration(
+                     Container(
+                       decoration:  BoxDecoration(
                          color: Colors.white, // 底色
                        ),
                        height: 50,
                        margin: EdgeInsets.only(left: 10),
-                       child: new Row(
+                       child: Row(
                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                          children: <Widget>[
-                           new Container(
-                             child:  new Row(
+                           Container(
+                             child:  Row(
                                mainAxisAlignment: MainAxisAlignment.spaceAround,
                                children: <Widget>[
-                                 new Container(
+                                 Container(
                                    alignment: Alignment.center,
                                    width: 100,
                                    //decoration: new
-                                   child: new Text(refundInfoList[0].fromStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
+                                   child: Text(refundInfoList[0].fromStation,style: TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
                                  ),
-                                 new Container(
+                                 Container(
                                    alignment: Alignment.center,
                                    width: 80,
-                                   child:  new Column(
+                                   child:  Column(
                                      mainAxisAlignment: MainAxisAlignment.center,
                                      children: <Widget>[
-                                       new Text(refundInfoList[0].departureTime,style: new TextStyle(fontSize: 10)),
-                                       new Image.asset("images/arrow_right.png", width: 80, height: 10,),
+                                       Text(refundInfoList[0].departureTime,style: TextStyle(fontSize: 10)),
+                                       Image.asset("images/arrow_right.png", width: 80, height: 10,),
                                      ],
                                    ),
                                  ),
-                                 new Container(
+                                 Container(
                                    alignment: Alignment.center,
                                    width: 100,
                                    padding: EdgeInsets.only(left: 10),
-                                   child: new Text(refundInfoList[0].targetStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
+                                   child: Text(refundInfoList[0].targetStation,style: TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
                                  ),
                                ],
                              ),
@@ -87,7 +99,7 @@ class _RefundStat extends State{
                          ],
                        ),
                      ),
-                     new Divider(height: 5,color: Colors.blue,),
+                     Divider(height: 5,color: Colors.blue,),
                    ],
                  ),
                ),
@@ -119,10 +131,10 @@ class _RefundStat extends State{
                    Text('$totalRefundPrice'),
                  ],
                ),
-               new Container(
+               Container(
                  padding: EdgeInsets.only(top: 5),
                  alignment: Alignment.center,
-                 child:  new MaterialButton(
+                 child:  MaterialButton(
                    color: Colors.blue,
                    textColor: Colors.white,
                    height: 40,

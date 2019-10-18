@@ -4,7 +4,7 @@ import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/model/pay_order_info.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
-import 'package:flutter_scqckypw/views/pay_web_dialog.dart';
+import 'package:flutter_scqckypw/views/pay_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'common_view.dart';
@@ -52,59 +52,59 @@ class _OrderPayingState extends State {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       backgroundColor: Color(0xFFF0EFF4),
-      appBar: new AppBar(
+      appBar: AppBar(
         title: Text('订单详情'),
       ),
-      body:   _orderInfo==null? WaitingWidget():Container(
+      body:   _orderInfo==null? LoadingDialog():Container(
         padding: EdgeInsets.only(left: 5, right: 5),
         child: ListView(
           children: <Widget>[
-            new Column(
+            Column(
               children: <Widget>[
                 ///车票
-                new Container(
-                  decoration:  new BoxDecoration(
+                Container(
+                  decoration:  BoxDecoration(
                     color: Colors.white, // 底色
                   ),
-                  child: new Column(
+                  child: Column(
                     children: <Widget>[
-                      new Container(
-                        decoration:  new BoxDecoration(
+                      Container(
+                        decoration:  BoxDecoration(
                           color: Colors.white, // 底色
                         ),
                         height: 50,
                         margin: EdgeInsets.only(left: 10),
-                        child: new Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            new Container(
-                              child:  new Row(
+                            Container(
+                              child:  Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: <Widget>[
-                                  new Container(
+                                  Container(
                                     alignment: Alignment.center,
                                     width: 100,
                                     //decoration: new
-                                    child: new Text(_orderInfo[0].fromStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
+                                    child: Text(_orderInfo[0].fromStation,style: TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
                                   ),
-                                  new Container(
+                                  Container(
                                     alignment: Alignment.center,
                                     width: 80,
-                                    child:  new Column(
+                                    child:  Column(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: <Widget>[
-                                        new Text(_orderInfo[0].date,style: new TextStyle(fontSize: 10)),
-                                        new Image.asset("images/arrow_right.png", width: 80, height: 10,),
+                                        Text(_orderInfo[0].date,style: TextStyle(fontSize: 10)),
+                                        Image.asset("images/arrow_right.png", width: 80, height: 10,),
                                       ],
                                     ),
                                   ),
-                                  new Container(
+                                  Container(
                                     alignment: Alignment.center,
                                     width: 100,
                                     padding: EdgeInsets.only(left: 10),
-                                    child: new Text(_orderInfo[0].targetStation,style: new TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
+                                    child: Text(_orderInfo[0].targetStation,style: TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
                                   ),
                                 ],
                               ),
@@ -112,19 +112,19 @@ class _OrderPayingState extends State {
                           ],
                         ),
                       ),
-                      new Divider(height: 5,color: Colors.blue,),
+                      Divider(height: 5,color: Colors.blue,),
                     ],
                   ),
                 ),
 
               ],
             ),
-            new Container(
+            Container(
               height: 10,
             ),
-            new Container(
+            Container(
               decoration: BoxDecoration(color: Colors.white),
-              child: new Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -135,7 +135,7 @@ class _OrderPayingState extends State {
                       style: TextStyle(fontSize: 12),
                     ),
                   ),
-                  new Container(
+                  Container(
                     padding: EdgeInsets.only(bottom: 5),
                     alignment: Alignment.center,
                     child: _userPassengerWidget(),
@@ -143,27 +143,27 @@ class _OrderPayingState extends State {
                 ],
               ),
             ),
-            new Container(
+            Container(
               height: 10,
             ),
-            new Container(
+            Container(
               decoration: BoxDecoration(color: Colors.white),
               height: 50,
-              child: new Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Text('总价'),
+                  Text('总价'),
                   Text('￥$_totalPrice', style: TextStyle(color: Colors.deepOrangeAccent,),),
                 ],
               ),
             ),
-            new Container(
-              decoration: new BoxDecoration(),
+            Container(
+              decoration: BoxDecoration(),
               height: 10,
             ),
             Container(
               alignment: Alignment.center,
-              child: new MaterialButton(
+              child: MaterialButton(
                 color: Colors.blue,
                 textColor: Colors.white,
                 height: 40,
@@ -187,12 +187,17 @@ class _OrderPayingState extends State {
   ///去支付
   _gotoPay(String payWay) async {
      showDialog(context: context, builder: (_){
-       return new PayWebDialog(PAY_MIDDLE_URL+'?payid='+orderId.toString()+'&plateform='+payWay);
+       return PayWebDialog(PAY_MIDDLE_URL+'?payid='+orderId.toString()+'&plateform='+payWay);
      }).then((result){
        if(result != null && result){
          //付款成功
-         setState(() {
-           isPay = true;
+         showDialog(context: context, builder: (_){
+           return SuccessDialog('付款成功');
+         }).then((_){
+           setState(() {
+             isPay = true;
+           });
+           Navigator.of(context).popUntil((route)=>route.isFirst);
          });
        }
      });
@@ -200,13 +205,13 @@ class _OrderPayingState extends State {
 
   ///乘客
   Widget _userPassengerWidget() {
-    List<Widget> list = new List();
+    List<Widget> list = List();
     for(int i=0; i<_orderInfo.length; i++){
       list.add(_SelectedPassengers(_orderInfo[i]));
     }
     return Container(
       color: Colors.white,
-      child: new Column(
+      child: Column(
         children: <Widget>[
           Divider(
             height: 5,
@@ -238,18 +243,18 @@ class _SelectedPassengers extends StatelessWidget{
           width: 400,
           padding: EdgeInsets.only(left: 10, right: 10, top: 5),
           color: Colors.white,
-          child: new Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              new Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  new Row(
+                  Row(
                     children: <Widget>[
-                      new Text(
+                      Text(
                         _passenger.passengerName,
                       ),
-                      new Text(
+                      Text(
                         '  成人票',
                         style: TextStyle(fontSize: 12),
                       ),
@@ -257,7 +262,7 @@ class _SelectedPassengers extends StatelessWidget{
                   ),
                   Container(
                     padding: EdgeInsets.only(top: 5),
-                    child: new Text(
+                    child: Text(
                         '证件号  ${_passenger.idNumber}'),
                   ),
                 ],

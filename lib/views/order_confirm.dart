@@ -8,8 +8,9 @@ import 'package:flutter_scqckypw/service/ticket_service.dart';
 import 'package:flutter_scqckypw/views/common_view.dart';
 import 'package:flutter_scqckypw/views/order_pay.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-import '../data_util.dart';
+import '../util/data_util.dart';
 
 ///确定订单界面
 class TicketOrderConfirm extends StatefulWidget {
@@ -19,7 +20,7 @@ class TicketOrderConfirm extends StatefulWidget {
 
   @override
   State createState() {
-    return new _Body(_tickerMode);
+    return _Body(_tickerMode);
   }
 }
 
@@ -30,17 +31,17 @@ class _Body extends State<TicketOrderConfirm> {
   ///用户常用乘车人
   List<Passenger> _userPassengers;
   ///用户常用乘车人
-  List<Passenger> _selectedPassengers = new List();
+  List<Passenger> _selectedPassengers = List();
   ///总共价格
   double _totalPrice = 0.0;
   ///token创建订单时需要
   String _token;
 
-  var orderService = new OrderService();
-  var _passengerService = new PassengerService();
-  var _ticketService = new TicketService();
-  var _contactNameCtrl = new TextEditingController(text: '张三');
-  var _contactPhoneCtrl = new TextEditingController(text: '158025466112');
+  var orderService = OrderService();
+
+  var _ticketService = TicketService();
+  var _contactNameCtrl = TextEditingController(text: '张三');
+  var _contactPhoneCtrl = TextEditingController(text: '158025466112');
 
   _Body(this._tickerMode){
     _initToken();
@@ -48,33 +49,42 @@ class _Body extends State<TicketOrderConfirm> {
 
   ///加载常用乘车人
   _loadUserPassengers() {
-    _passengerService.getPassengers(1).then((data) {
-      setState(() {
-        _userPassengers = data;
-      });
+    PassengerService().getPassengers(1).then((httpResult) {
+      if(httpResult.success){
+        setState(() {
+          _userPassengers = httpResult.data;
+        });
+      }else{
+        Fluttertoast.showToast(msg: httpResult.errMsg);
+      }
     });
   }
   _initToken(){
     _ticketService.getOrderPageToken(_tickerMode.carryStaId, _tickerMode.departureTime, _tickerMode.signId, _tickerMode.targetStation)
-        .then((data){
-          _token = data;
+        .then((httpResult){
+          if(httpResult.success){
+            _token = httpResult.data;
+          }else{
+            Fluttertoast.showToast(msg: httpResult.errMsg);
+            Navigator.pop(context);
+          }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     _loadUserPassengers();
-    return new Scaffold(
+    return Scaffold(
       backgroundColor: Color(0xFFF0EFF4),
-      appBar: new AppBar(
+      appBar: AppBar(
         title: Text('确认订单'),
       ),
       body: Container(
         padding: EdgeInsets.only(left: 5, right: 5),
         child: ListView(
           children: <Widget>[
-            new TicketItem(_tickerMode),
-            new Container(
+            TicketItem(_tickerMode),
+            Container(
               decoration: BoxDecoration(color: Colors.white),
               child: Column(
                 children: <Widget>[
@@ -95,12 +105,12 @@ class _Body extends State<TicketOrderConfirm> {
                 ],
               ),
             ),
-            new Container(
+            Container(
               height: 10,
             ),
-            new Container(
+            Container(
               decoration: BoxDecoration(color: Colors.white),
-              child: new Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -112,7 +122,7 @@ class _Body extends State<TicketOrderConfirm> {
                     ),
                   ),
                   Divider(),
-                  new Container(
+                  Container(
                     padding: EdgeInsets.only(bottom: 5),
                     alignment: Alignment.center,
                     child: _userPassengerWidget(),
@@ -120,27 +130,27 @@ class _Body extends State<TicketOrderConfirm> {
                 ],
               ),
             ),
-            new Container(
+            Container(
               height: 10,
             ),
-            new Container(
+            Container(
               decoration: BoxDecoration(color: Colors.white),
               height: 50,
-              child: new Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Text('总价'),
+                  Text('总价'),
                   Text('￥$_totalPrice', style: TextStyle(color: Colors.deepOrangeAccent,),),
                 ],
               ),
             ),
-            new Container(
-              decoration: new BoxDecoration(),
+            Container(
+              decoration: BoxDecoration(),
               height: 10,
             ),
             Container(
               alignment: Alignment.center,
-              child: new MaterialButton(
+              child: MaterialButton(
                 color: Colors.blue,
                 textColor: Colors.white,
                 height: 40,
@@ -148,16 +158,23 @@ class _Body extends State<TicketOrderConfirm> {
                 child: Text('立刻预定'),
                 onPressed: () {
                   showDialog(context: context, builder: (content){
-                    return new CaptureCodeDialog(context);
+                    return CaptureCodeDialog(context);
                   }).then((data){
                     if(data != null ){
                       //正确
+                      showDialog(context: context, builder: (_){
+                        return LoadingDialog(text:'创建订单中，请勿返回');
+                      });
                       orderService.order(_tickerMode, _selectedPassengers, _contactNameCtrl.text, _contactNameCtrl.text, _token, data)
                           .then((httpResult){
                          if(httpResult.success){
-                           Navigator.of(context).push(new MaterialPageRoute(builder: (_){
-                              return new OrderPayingView(httpResult.data);
+                           Navigator.pop(context);
+                           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_){
+                              return OrderPayingView(httpResult.data);
                            }));
+                         }else{
+                           Navigator.pop(context);
+                           Fluttertoast.showToast(msg: httpResult.errMsg);
                          }
                       });
                     }
@@ -181,10 +198,10 @@ class _Body extends State<TicketOrderConfirm> {
         height: 40,
         width: 170,
         decoration: BoxDecoration(
-            border: new Border.all(color: Colors.blue, width: 0.5)),
+            border: Border.all(color: Colors.blue, width: 0.5)),
         child: FlatButton(
           padding: EdgeInsets.zero,
-          child: new Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Icon(
@@ -203,7 +220,7 @@ class _Body extends State<TicketOrderConfirm> {
     } else {
       return Container(
         color: Colors.white,
-        child: new Column(
+        child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
@@ -224,12 +241,12 @@ class _Body extends State<TicketOrderConfirm> {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                                border: new Border.all(color: Colors.blue, width: 1)),
+                                border: Border.all(color: Colors.blue, width: 1)),
                               child: Text(_userPassengers[index].realName, style: TextStyle(fontSize: 14,color: Colors.blue),),
                             ),
                             onPressed: () {
                               setState(() {
-                                if(!_selectedPassengers.contains(_userPassengers[index])){
+                                if(!_selectedPassengers.any((t)=>t.id == _userPassengers[index].id)){
                                   _selectedPassengers.add(_userPassengers[index]);
                                   _totalPrice+=_tickerMode.price;
                                 }
@@ -246,8 +263,8 @@ class _Body extends State<TicketOrderConfirm> {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                                  border: new Border.all(color: Colors.blue, width: 1)),
-                              child: new Row(
+                                  border: Border.all(color: Colors.blue, width: 1)),
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Icon(
@@ -284,7 +301,7 @@ class _Body extends State<TicketOrderConfirm> {
 
   ///已选择乘客
   List<Widget> getSelectedPassengerWidget(){
-    List<Widget> list = new List();
+    List<Widget> list = List();
     for(int i=0; i<_selectedPassengers.length; i++){
       list.add(_SelectedPassengers(_selectedPassengers[i], onDelete:(){
         setState(() {
@@ -316,18 +333,18 @@ class _SelectedPassengers extends StatelessWidget{
           width: 400,
           padding: EdgeInsets.only(left: 10, right: 10, top: 5),
           color: Colors.white,
-          child: new Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              new Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  new Row(
+                  Row(
                     children: <Widget>[
-                      new Text(
+                      Text(
                         _passenger.realName,
                       ),
-                      new Text(
+                      Text(
                         '  成人票',
                         style: TextStyle(fontSize: 12),
                       ),
@@ -335,15 +352,15 @@ class _SelectedPassengers extends StatelessWidget{
                   ),
                   Container(
                     padding: EdgeInsets.only(top: 5),
-                    child: new Text(
+                    child: Text(
                         convertIdTypeByVal(_passenger.idType) +
                             ' ${_passenger.idNumber}'),
                   ),
                 ],
               ),
-              new Row(
+              Row(
                 children: <Widget>[
-                  new IconButton(
+                  IconButton(
                       icon: Icon(Icons.delete_outline,
                           color: Colors.red),
                       onPressed: () {
