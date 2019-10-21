@@ -10,9 +10,8 @@ class YesNoDialog extends StatelessWidget {
 
   final String title;
 
-  var pContent;
 
-  YesNoDialog(this.title, this.pContent);
+  YesNoDialog(this.title);
 
   @override
   Widget build(BuildContext context) {

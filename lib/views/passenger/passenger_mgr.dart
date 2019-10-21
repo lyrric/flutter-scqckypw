@@ -151,9 +151,8 @@ class _PassengerItem extends StatelessWidget{
                     });
                   }),
                   new IconButton(icon: Icon(Icons.delete_outline, color: Colors.red), onPressed: (){
-
-                    showDialog(context: context,builder: (content){
-                      return new YesNoDialog('是否删除', context);
+                    showDialog(context: context,builder: (_){
+                      return new YesNoDialog('是否删除');
                     }).then((val){
                       if(val != null && val){
                         _passengerService.delete(_passenger.id).then((result){

@@ -14,6 +14,7 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,6 +32,10 @@ class MyApp extends StatelessWidget {
       ),
       home: MyHomePage(title: '四川汽车票务网'),
     );
+  }
+
+  MyApp(){
+    ///初始化获取jSessionId（cookie）
   }
 }
 

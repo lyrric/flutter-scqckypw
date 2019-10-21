@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 
-part 'refund_info.g.dart';
+part 'generator/refund_info.g.dart';
 
 @JsonSerializable()
 class RefundInfo{

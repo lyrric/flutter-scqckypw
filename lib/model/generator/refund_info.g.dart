@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'refund_info.dart';
+part of '../refund_info.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

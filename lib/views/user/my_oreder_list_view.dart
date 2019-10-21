@@ -140,8 +140,8 @@ class _BodyStat extends State{
 
   ///取消订单
   void _onCancel(int payOrderId){
-    showDialog(context: context,builder: (content){
-      return new YesNoDialog('确定取消吗？', context);
+    showDialog(context: context,builder: (_){
+      return new YesNoDialog('确定取消吗？');
     }).then((val){
       if(val != null && val){
         _orderService.cancel(payOrderId).then((httpResult){
@@ -159,8 +159,8 @@ class _BodyStat extends State{
   }
   ///退款
   void _refund(int payOrderId){
-    showDialog(context: context,builder: (content){
-      return new YesNoDialog('确定退款吗？', context);
+    showDialog(context: context,builder: (_){
+      return new YesNoDialog('确定退款吗？');
     }).then((val){
       if(val != null && val){
         _orderService.cancel(payOrderId).then((httpResult){

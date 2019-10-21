@@ -2,9 +2,9 @@
 ///四川汽车客运票务网
 const String BASE_URL = 'https://www.scqckypw.com';
 ///验证码Url
-const String CAPTURE_URL = BASE_URL + '/rCode.jpg?d=';
+const String CAPTCHA_URL = BASE_URL + '/rCode.jpg?d=';
 ///验证码是否正确接口Url
-const String CAPTURE_CHECK_URL = BASE_URL + '/rCodeCheck';
+const String CAPTCHA_CHECK_URL = BASE_URL + '/rCodeCheck';
 ///终点车站Url
 const String TARGET_CITY_URL = BASE_URL + '/get/targetCitys.html';
 ///登陆页面Url
@@ -43,3 +43,7 @@ const String CANCEL_ORDER_URL = BASE_URL + '/ticketOrder/cancel';
 const String REFUND_ORDER_PAGE_URL = BASE_URL + '/cancelticket/requestRetTicket.html';
 ///退款订单接口Url
 const String REFUND_ORDER_URL = BASE_URL + '/cancelticket/requestRetTicket.html';
+///获取当前城市（主要是获取cookie用）
+const String COOKIE_URL = BASE_URL+'/userCommon/getCurrentCity.json';
+///获取验证码接口Url
+const String CAPTCHA_CODE_URL = 'http://47.97.215.50:8080/captcha/code';

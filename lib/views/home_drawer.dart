@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/service/user_service.dart';
+import 'package:flutter_scqckypw/views/common_view.dart';
 import 'package:flutter_scqckypw/views/login.dart';
 import 'package:flutter_scqckypw/views/passenger/passenger_mgr.dart';
 import 'package:flutter_scqckypw/views/user/my_oreder_list_view.dart';
@@ -76,9 +77,16 @@ class _HomeDrawerStat extends State{
             leading: CircleAvatar(child: Text('D'), ),
             title: Text("退出登陆"),
             onTap: (){
-                setState(() {
-                  Data.logout();
+                showDialog(context: context,builder: (_){
+                  return YesNoDialog('确定退出吗？');
+                }).then((result){
+                  if(result){
+                    setState(() {
+                      Data.logout();
+                    });
+                  }
                 });
+
             },
           ),
         ),
