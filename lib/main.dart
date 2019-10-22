@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
+import 'package:flutter_scqckypw/model/http_result.dart';
+import 'package:flutter_scqckypw/service/common_service.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
 import 'package:flutter_scqckypw/views/common_view.dart';
@@ -34,9 +36,6 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  MyApp(){
-    ///初始化获取jSessionId（cookie）
-  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -49,6 +48,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +63,24 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor:  Color(0xF0FFFFFF),
       body: _Body(context)
     );
+  }
+
+
+  _MyHomePageState(){
+    _initCookie();
+  }
+
+  ///初始化获取jSessionId（cookie）
+  _initCookie(){
+    CommonService().initCookie().then((httpResult){
+      if(!httpResult.success){
+        showDialog(context: context, builder: (_){
+          return new MessageDialog(httpResult.errMsg);
+        }).then((_){
+          _initCookie();
+        });
+      }
+    });
   }
 }
 

@@ -198,11 +198,11 @@ class LoadingDialog extends StatelessWidget{
 }
 
 ///提示框
-class SuccessDialog extends StatelessWidget{
+class MessageDialog extends StatelessWidget{
 
   final String _text;
 
-  SuccessDialog(this._text);
+  MessageDialog(this._text);
 
   @override
   Widget build(BuildContext context) {

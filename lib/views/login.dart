@@ -2,9 +2,11 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
+import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/service/common_service.dart';
 import 'package:flutter_scqckypw/service/login_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -37,26 +39,25 @@ class _FormView extends StatefulWidget{
 class _FormSate extends State<_FormView>{
 
   final _formKey = GlobalKey<_FormSate>();
-  var commonService = CommonService();
-  var loginService = LoginService();
-  //验证码数据
-  Uint8List captureBytes;
 
-  TextEditingController _usernameController = TextEditingController(text: '1');
-  TextEditingController _passwordController = TextEditingController(text: '1');
-  TextEditingController _captureCodeController = TextEditingController();
+
+  String captchaCode;
+
+  TextEditingController _usernameController = TextEditingController(text: '0');
+  TextEditingController _passwordController = TextEditingController(text: '0');
 
   _FormSate(){
-    initCapture();
+    initCaptureCode();
   }
 
-  void initCapture(){
-    commonService.getCapture().then((data){
-      setState(() {
-        captureBytes = data;
-      });
-    });
+  Future<HttpResult> initCaptureCode() async{
+    var httpResult = await  CommonService().getCaptchaCode();
+    if(httpResult.success){
+      captchaCode = httpResult.data;
+    }
+    return httpResult;
   }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -81,30 +82,6 @@ class _FormSate extends State<_FormView>{
               labelText: '密码',
             ),
           ),
-          Row(
-            children: <Widget>[
-              Container(
-                width: 250,
-                child:  TextFormField(
-                  controller: _captureCodeController,
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.lock),
-                    hintText: '请输入验证码',
-                    labelText: '验证码',
-                  ),
-                ),
-              ),
-              Container(
-                width: 150,
-                child: captureBytes==null?Center(child: CircularProgressIndicator(), ):
-                FlatButton(
-                  child: Image.memory(captureBytes,width: 150,height:50, fit: BoxFit.fill,),
-                  onPressed: (){
-                  initCapture();
-                },)
-              )
-            ],
-          ),
           Container(
             padding: EdgeInsets.only(top: 5),
             alignment: Alignment.center,
@@ -118,21 +95,18 @@ class _FormSate extends State<_FormView>{
                 showDialog(context: context, builder: (_){
                   return LoadingDialog(text:'登录中...');
                 });
-                loginService.login(_usernameController.text, _passwordController.text, _captureCodeController.text)
-                    .then((httpResult){
-                      Navigator.pop(context);
-                      if(httpResult.success){
-                        //登陆成功
-                        Navigator.of(context).pop(true);
-                        Fluttertoast.showToast(
-                            msg: '登陆成功',
-                        );
-                      }else{
-                        initCapture();
-                        _captureCodeController.clear();
-                        Fluttertoast.showToast( msg: httpResult.errMsg,);
-                      }
-                });
+                //判断验证码是否获取
+                if(captchaCode == null){
+                  initCaptureCode().then((httpResult){
+                    if(httpResult.success){
+                      login();
+                    }else{
+                      Fluttertoast.showToast(msg: '登陆失败，请重试');
+                    }
+                  });
+                }else{
+                  login();
+                }
               },
             ),
           ),
@@ -140,5 +114,22 @@ class _FormSate extends State<_FormView>{
         ],
       ),
     );
+  }
+
+  void login(){
+    LoginService().login(_usernameController.text,
+        _passwordController.text, captchaCode)
+        .then((httpResult){
+      Navigator.pop(context);
+      if(httpResult.success){
+        //登陆成功
+        Navigator.of(context).pop(true);
+        Fluttertoast.showToast(
+          msg: '登陆成功',
+        );
+      }else{
+        Fluttertoast.showToast( msg: httpResult.errMsg,);
+      }
+    });
   }
 }

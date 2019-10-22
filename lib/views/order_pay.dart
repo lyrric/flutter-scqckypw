@@ -192,7 +192,7 @@ class _OrderPayingState extends State {
        if(result != null && result){
          //付款成功
          showDialog(context: context, builder: (_){
-           return SuccessDialog('付款成功');
+           return MessageDialog('付款成功');
          }).then((_){
            setState(() {
              isPay = true;

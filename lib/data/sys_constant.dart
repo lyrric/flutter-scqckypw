@@ -46,4 +46,4 @@ const String REFUND_ORDER_URL = BASE_URL + '/cancelticket/requestRetTicket.html'
 ///获取当前城市（主要是获取cookie用）
 const String COOKIE_URL = BASE_URL+'/userCommon/getCurrentCity.json';
 ///获取验证码接口Url
-const String CAPTCHA_CODE_URL = 'http://47.97.215.50:8080/captcha/code';
+const String CAPTCHA_CODE_URL = 'http://122.51.84.22:8099/captcha/code';

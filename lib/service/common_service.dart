@@ -44,7 +44,18 @@ class CommonService extends BaseService{
         'cookie':Data.cookie,
       },
     );
-    Map map = json.decode(response.data);
-    return HttpResult.fromJson(map);
+    return HttpResult.fromJson(response.data);
+  }
+
+  ///初始化获取cookie
+  Future<HttpResult> initCookie() async{
+    try {
+      Response response = await dio.get(COOKIE_URL);
+      return HttpResult.success();
+    }on DioError catch(e){
+      print(e);
+      return HttpResult.error('网络异常，请检查网络');
+    }
+
   }
 }
