@@ -80,7 +80,7 @@ class _FormSate extends State<_FormView>{
               minWidth: 300,
               child: Text('登陆'),
               onPressed: (){
-                login();
+                login().catchError(ExceptionHandler(context: context, retry: true, pop: true, retryMethod: login).handException);
               },
             ),
           ),
@@ -96,12 +96,11 @@ class _FormSate extends State<_FormView>{
     showDialog(context: context, builder: (_){
       return LoadingDialog(text:'登录中...');
     });
-    var handler = ExceptionHandler(context: context, retry: true, pop: true, retryMethod: login);
     if(Data.cookie.isEmpty){
-      await CommonService().initCookie().catchError(handler.handException);
+      await CommonService().initCookie();
     }
-    HttpResult httpResult = await CommonService().getCaptchaCode().catchError(handler.handException);
-    httpResult = await LoginService().login(_usernameController.text,_passwordController.text, httpResult.data).catchError(handler.handException);
+    HttpResult httpResult = await CommonService().getCaptchaCode();
+    httpResult = await LoginService().login(_usernameController.text,_passwordController.text, httpResult.data);
     if(httpResult.success){
       //登陆成功
       Navigator.pop(context);
