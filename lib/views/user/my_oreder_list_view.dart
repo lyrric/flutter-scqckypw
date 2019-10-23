@@ -162,7 +162,7 @@ class _BodyStat extends State{
   void _refund(OrderList order){
     var ticketIds = '';
     for( OrderDetail detail in order.orderDetails){
-      ticketIds = ","+detail.ticketId;
+      ticketIds = ","+detail.orderId.toString();
     }
     ticketIds = ticketIds.substring(1);
     Navigator.of(context).push(new MaterialPageRoute(builder: (_){
