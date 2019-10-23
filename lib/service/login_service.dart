@@ -39,6 +39,7 @@ class LoginService extends BaseService{
     );
     Map<String, dynamic> map = json.decode(response.data);
     if(map['success']){
+      Data.isLogin = true;
       return HttpResult.success();
     }else{
       return HttpResult.error(map['msg']);

@@ -12,6 +12,7 @@ class Data{
   static List<CityModel>  _cityList;
   static UserModel _defaultUser = new UserModel("点击登陆", '-', '-', '-', '-', '-');
   static UserModel user = _defaultUser;
+  static var isLogin = false;
   static String cookie = "";
 
   ///获取城市列表
@@ -39,6 +40,7 @@ class Data{
 
 
   static void logout(){
+    isLogin = false;
     cookie = '';
     user = _defaultUser;
   }

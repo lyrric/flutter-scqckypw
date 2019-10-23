@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
+import 'package:flutter_scqckypw/service/common_service.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/service/passenger_service.dart';
 import 'package:flutter_scqckypw/service/ticket_service.dart';
@@ -157,26 +158,27 @@ class _Body extends State<TicketOrderConfirm> {
                 minWidth: 350,
                 child: Text('立刻预定'),
                 onPressed: () {
-                  showDialog(context: context, builder: (content){
-                    return CaptureCodeDialog(context);
-                  }).then((data){
-                    if(data != null ){
-                      //正确
-                      showDialog(context: context, builder: (_){
-                        return LoadingDialog(text:'创建订单中，请勿返回');
-                      });
-                      orderService.order(_tickerMode, _selectedPassengers, _contactNameCtrl.text, _contactNameCtrl.text, _token, data)
+                  //正确
+                  showDialog(context: context, builder: (_){
+                    return LoadingDialog(text:'创建订单中，请勿返回');
+                  });
+                  CommonService().getCaptchaCode().then((httpResult){
+                    if(httpResult.success){
+                      orderService.order(_tickerMode, _selectedPassengers, _contactNameCtrl.text, _contactNameCtrl.text, _token, httpResult.data)
                           .then((httpResult){
-                         if(httpResult.success){
-                           Navigator.pop(context);
-                           Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_){
-                              return OrderPayingView(httpResult.data);
-                           }));
-                         }else{
-                           Navigator.pop(context);
-                           Fluttertoast.showToast(msg: httpResult.errMsg);
-                         }
+                        if(httpResult.success){
+                          Navigator.pop(context);
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_){
+                            return OrderPayingView(httpResult.data);
+                          }));
+                        }else{
+                          Navigator.pop(context);
+                          Fluttertoast.showToast(msg: httpResult.errMsg);
+                        }
                       });
+                    }else{
+                      Navigator.pop(context);
+                      Fluttertoast.showToast(msg: httpResult.errMsg);
                     }
                   });
                 },

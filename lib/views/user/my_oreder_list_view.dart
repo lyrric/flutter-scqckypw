@@ -5,6 +5,7 @@ import 'package:flutter_scqckypw/model/order.dart';
 import 'package:flutter_scqckypw/model/page_result.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/views/order_pay.dart';
+import 'package:flutter_scqckypw/views/refund_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../common_view.dart';
@@ -158,23 +159,15 @@ class _BodyStat extends State{
     });
   }
   ///退款
-  void _refund(int payOrderId){
-    showDialog(context: context,builder: (_){
-      return new YesNoDialog('确定退款吗？');
-    }).then((val){
-      if(val != null && val){
-        _orderService.cancel(payOrderId).then((httpResult){
-          if(httpResult.success){
-            Fluttertoast.showToast(msg: '退款成功');
-            setState(() {
-              _orders.singleWhere((e)=>e.payOrderId == payOrderId).orderStatus = '已退款';
-            });
-          }else{
-            Fluttertoast.showToast(msg: httpResult.errMsg);
-          }
-        });
-      }
-    });
+  void _refund(OrderList order){
+    var ticketIds = '';
+    for( OrderDetail detail in order.orderDetails){
+      ticketIds = ","+detail.ticketId;
+    }
+    ticketIds = ticketIds.substring(1);
+    Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+      return new RefundView(order.payOrderId, ticketIds);
+    }));
   }
 
   @override
@@ -204,6 +197,7 @@ class _BodyStat extends State{
             return _OrderItem(_orders[index],
               onPay: (payOrderId){_onPay(payOrderId);},
               onCancel: (payOrderId){_onCancel(payOrderId);},
+              refund: (orderList){_refund(orderList);},
             );
           }else if(index == _orders.length && index < totalCount){
             //getData
@@ -235,7 +229,7 @@ class _OrderItem extends StatelessWidget{
   ///取消按钮事件
   final Function(int payOrderId) onCancel;
   ///退款事件
-  final Function(int payOrderId) refund;
+  final Function(OrderList order) refund;
 
   _OrderItem(this._order, {this.onPay, this.onCancel, this.refund});
 
@@ -328,7 +322,7 @@ class _OrderItem extends StatelessWidget{
         child: FlatButton(
           color: Colors.blue,
           child: Text('退票', style: TextStyle(color: Colors.white),),
-          onPressed: (){refund(_order.payOrderId);},
+          onPressed: (){refund(_order);},
         ),
       );
     }else{

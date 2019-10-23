@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/service/common_service.dart';
@@ -41,22 +42,10 @@ class _FormSate extends State<_FormView>{
   final _formKey = GlobalKey<_FormSate>();
 
 
-  String captchaCode;
 
   TextEditingController _usernameController = TextEditingController(text: '0');
   TextEditingController _passwordController = TextEditingController(text: '0');
 
-  _FormSate(){
-    initCaptureCode();
-  }
-
-  Future<HttpResult> initCaptureCode() async{
-    var httpResult = await  CommonService().getCaptchaCode();
-    if(httpResult.success){
-      captchaCode = httpResult.data;
-    }
-    return httpResult;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,21 +81,7 @@ class _FormSate extends State<_FormView>{
               minWidth: 300,
               child: Text('登陆'),
               onPressed: (){
-                showDialog(context: context, builder: (_){
-                  return LoadingDialog(text:'登录中...');
-                });
-                //判断验证码是否获取
-                if(captchaCode == null){
-                  initCaptureCode().then((httpResult){
-                    if(httpResult.success){
-                      login();
-                    }else{
-                      Fluttertoast.showToast(msg: '登陆失败，请重试');
-                    }
-                  });
-                }else{
-                  login();
-                }
+                login();
               },
             ),
           ),
@@ -116,20 +91,42 @@ class _FormSate extends State<_FormView>{
     );
   }
 
-  void login(){
-    LoginService().login(_usernameController.text,
-        _passwordController.text, captchaCode)
-        .then((httpResult){
-      Navigator.pop(context);
-      if(httpResult.success){
-        //登陆成功
-        Navigator.of(context).pop(true);
-        Fluttertoast.showToast(
-          msg: '登陆成功',
-        );
-      }else{
-        Fluttertoast.showToast( msg: httpResult.errMsg,);
+  ///初始化获取jSessionId（cookie）
+  _initCookie() async {
+    if(Data.cookie.isEmpty){
+      HttpResult httpResult = await CommonService().initCookie();
+      if(!httpResult.success){
+        showDialog(context: context, builder: (_){
+          return new MessageDialog(httpResult.errMsg);
+        }).then((_){
+          _initCookie();
+        });
       }
+    }
+  }
+
+  Future login() async {
+    showDialog(context: context, builder: (_){
+      return LoadingDialog(text:'登录中...');
     });
+    await _initCookie();
+    HttpResult httpResult = await CommonService().getCaptchaCode();
+    if(!httpResult.success){
+      Fluttertoast.showToast(msg: httpResult.errMsg);
+      Navigator.pop(context);
+      return;
+    }
+    httpResult = await LoginService().login(_usernameController.text,_passwordController.text, httpResult.data);
+    if(httpResult.success){
+      //登陆成功
+      Navigator.pop(context);
+      Navigator.of(context).pop(true);
+      Fluttertoast.showToast(
+        msg: '登陆成功',
+      );
+    }else{
+      Fluttertoast.showToast( msg: httpResult.errMsg,);
+      Navigator.pop(context);
+    }
   }
 }

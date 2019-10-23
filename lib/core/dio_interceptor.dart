@@ -22,26 +22,25 @@ class DioInterceptor extends InterceptorsWrapper{
   @override
   Future onResponse(Response response)async  {
     //设置新的cookie
-    List cookies = response.headers['set-cookie'];
-    String cookiesStr = '';
-    if(cookies != null && cookies.length > 0){
-      for(String cookie in cookies){
-        if(cookie.indexOf('JSESSIONID') != -1){
-          cookiesStr+=cookie;
+    if(response.request.path.startsWith('https://www.scqckypw')){
+      List cookies = response.headers['set-cookie'];
+      if(cookies != null && cookies.length > 0){
+        for(String cookie in cookies){
+          if(cookie.startsWith('JSESSIONID')){
+            Data.logout();
+            Data.cookie = cookie;
+          }
         }
       }
-      if(cookiesStr.isNotEmpty){
-        print('cookies='+cookiesStr);
-        Data.cookie = cookiesStr;
+      var data = response.data;
+      if(data is String){
+        if(data.startsWith('<script type="text/javascript">parent.location.href')){
+          Data.logout();
+          Fluttertoast.showToast(msg: '登录过期，请重新登陆');
+        }
       }
+      return response;
     }
-    var data = response.data;
-    if(data is String){
-      if(data.indexOf('parent.location.href') != -1){
-        Data.logout();
-        Fluttertoast.showToast(msg: '登录过期，请重新登陆');
-      }
-    }
-    return response;
+
   }
 }
