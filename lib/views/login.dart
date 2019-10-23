@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
@@ -40,8 +41,6 @@ class _FormView extends StatefulWidget{
 class _FormSate extends State<_FormView>{
 
   final _formKey = GlobalKey<_FormSate>();
-
-
 
   TextEditingController _usernameController = TextEditingController(text: '0');
   TextEditingController _passwordController = TextEditingController(text: '0');
@@ -91,32 +90,18 @@ class _FormSate extends State<_FormView>{
     );
   }
 
-  ///初始化获取jSessionId（cookie）
-  _initCookie() async {
-    if(Data.cookie.isEmpty){
-      HttpResult httpResult = await CommonService().initCookie();
-      if(!httpResult.success){
-        showDialog(context: context, builder: (_){
-          return new MessageDialog(httpResult.errMsg);
-        }).then((_){
-          _initCookie();
-        });
-      }
-    }
-  }
+
 
   Future login() async {
     showDialog(context: context, builder: (_){
       return LoadingDialog(text:'登录中...');
     });
-    await _initCookie();
-    HttpResult httpResult = await CommonService().getCaptchaCode();
-    if(!httpResult.success){
-      Fluttertoast.showToast(msg: httpResult.errMsg);
-      Navigator.pop(context);
-      return;
+    var handler = ExceptionHandler(context: context, retry: true, pop: true, retryMethod: login);
+    if(Data.cookie.isEmpty){
+      await CommonService().initCookie().catchError(handler.handException);
     }
-    httpResult = await LoginService().login(_usernameController.text,_passwordController.text, httpResult.data);
+    HttpResult httpResult = await CommonService().getCaptchaCode().catchError(handler.handException);
+    httpResult = await LoginService().login(_usernameController.text,_passwordController.text, httpResult.data).catchError(handler.handException);
     if(httpResult.success){
       //登陆成功
       Navigator.pop(context);

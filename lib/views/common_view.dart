@@ -10,7 +10,6 @@ class YesNoDialog extends StatelessWidget {
 
   final String title;
 
-
   YesNoDialog(this.title);
 
   @override
@@ -23,7 +22,7 @@ class YesNoDialog extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Icon(Icons.check, color: Colors.green,),
-                Text(' 确定')
+                Text('确定')
               ],
             ),
             onPressed: () {
@@ -45,6 +44,44 @@ class YesNoDialog extends StatelessWidget {
   }
 }
 
+///是否确定框
+class RetryDialog extends StatelessWidget {
+
+  final String title;
+
+  RetryDialog(this.title);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+        title: Text(title),
+        content: Text('是否重试？'),
+        actions: <Widget>[
+          FlatButton(
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.check, color: Colors.green,),
+                Text('重试')
+              ],
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+          FlatButton(
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.cancel, color: Colors.red,),
+                Text(' 取消')
+              ],
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          )
+        ]);
+  }
+}
 ///等待
 class LoadingDialog extends StatelessWidget{
 

@@ -72,15 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   ///初始化获取jSessionId（cookie）
   _initCookie(){
-    CommonService().initCookie().then((httpResult){
-      if(!httpResult.success){
-        showDialog(context: context, builder: (_){
-          return new MessageDialog(httpResult.errMsg);
-        }).then((_){
-          _initCookie();
-        });
-      }
-    });
+    CommonService().initCookie();
   }
 }
 

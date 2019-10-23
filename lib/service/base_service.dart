@@ -9,4 +9,6 @@ abstract class BaseService{
     dio = new Dio();
     dio.interceptors.add(new DioInterceptor());
   }
+
+
 }

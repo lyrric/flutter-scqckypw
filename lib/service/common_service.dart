@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_scqckypw/data/data.dart';
@@ -36,12 +34,8 @@ class CommonService extends BaseService{
 
   ///初始化获取cookie
   Future<HttpResult> initCookie() async{
-    try {
-      Response response = await dio.get(COOKIE_URL);
-      return HttpResult.success();
-    }on DioError catch(e){
-      print(e);
-      return HttpResult.error('网络异常，请检查网络');
-    }
+    await dio.get(COOKIE_URL);
+    return HttpResult.success();
   }
+
 }
