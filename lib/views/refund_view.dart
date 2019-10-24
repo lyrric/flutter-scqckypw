@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
 import 'package:flutter_scqckypw/model/refund_info.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -29,14 +30,16 @@ class _RefundStat extends State{
 
   var orderService = OrderService();
 
-  _RefundStat(this.payOrderId, this.ticketIds){
-    orderService.getRefundPageInfo(ticketIds, payOrderId).then((result){
+  _initData(){
+    orderService.getRefundPageInfo(ticketIds, payOrderId).catchError(ExceptionHandler.toastHandler().handException).then((result){
       if(result.success){
         refundInfoList = result.data;
-      }else{
-        Fluttertoast.showToast(msg: result.errMsg);
       }
     });
+  }
+
+  _RefundStat(this.payOrderId, this.ticketIds){
+
   }
 
   @override

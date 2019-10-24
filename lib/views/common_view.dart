@@ -44,6 +44,48 @@ class YesNoDialog extends StatelessWidget {
   }
 }
 
+///网络异常
+class NetworkErrorView extends StatelessWidget{
+
+  Function retryMethod;
+
+  NetworkErrorView(this.retryMethod);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        height: 300,
+        width: 200,
+        child: Column(
+          children: <Widget>[
+            Image.asset('images/network-error.jpg', width: 100,),
+            Container(height: 20,),
+            Text('诶呀，网络出了问题', style: TextStyle(fontSize: 16),),
+            Container(height: 20,),
+            Container(
+              decoration: new BoxDecoration(
+                border: new Border.all(color: Colors.blue, width: 0.5), // 边色与边宽度
+                //color: Color(0xFF9E9E9E), // 底色
+                borderRadius: new BorderRadius.circular((20.0)), // 圆角度/ 也可控件一边圆角大小
+              ),
+              alignment: Alignment.center,
+              child:  MaterialButton(
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  height: 40,
+                  minWidth: 150,
+                  child: Text('重新加载', style: TextStyle(color: Colors.blue, fontSize: 18),),
+                  onPressed: retryMethod
+              ),
+            ),
+
+          ],
+        ),
+      ),
+    );
+  }
+}
 ///是否确定框
 class RetryDialog extends StatelessWidget {
 

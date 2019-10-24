@@ -18,6 +18,30 @@ class ExceptionHandler{
 
   ExceptionHandler({this.showErrorType, this.pop, this.retry, this.retryMethod, this.context});
 
+  ///just toast
+  factory ExceptionHandler.toastHandler(){
+    return ExceptionHandler()
+      ..showErrorType = ShowErrorType.TOAST
+      ..pop = false;
+  }
+
+  ///提示并pop
+  factory ExceptionHandler.popAndToastHandler(BuildContext _context){
+    return ExceptionHandler()
+        ..showErrorType = ShowErrorType.TOAST
+        ..pop = true
+        ..context = _context;
+  }
+  ///带重试的提示
+  factory ExceptionHandler.retryWithPopHandler(BuildContext _context, Function retryMethod){
+    return ExceptionHandler()
+      ..showErrorType = ShowErrorType.YES_NO_DIALOG
+      ..pop = true
+      ..retry = true
+      ..retryMethod = retryMethod
+      ..context = _context;
+  }
+
    handException(dynamic error){
      if(pop){
         Navigator.pop(context);
@@ -69,4 +93,9 @@ class BusinessError implements Exception{
   String toString() {
     return 'BusinessException{errMsg: $errMsg}';
   }
+}
+
+///网络异常
+class NetworkError implements Exception{
+
 }
