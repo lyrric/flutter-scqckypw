@@ -108,7 +108,6 @@ class _BodyState extends State<_Body>{
 
   @override
   Widget build(BuildContext context) {
-    return NetworkErrorView(null);
     return Container(
         height: 200,
         decoration:  BoxDecoration(

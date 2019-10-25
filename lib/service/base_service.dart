@@ -6,7 +6,7 @@ abstract class BaseService{
   Dio dio;
 
   BaseService(){
-    dio = new Dio();
+    dio = new Dio(BaseOptions(connectTimeout:3000, sendTimeout: 5000, receiveTimeout: 5000));
     dio.interceptors.add(new DioInterceptor());
   }
 

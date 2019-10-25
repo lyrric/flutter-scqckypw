@@ -26,10 +26,6 @@ class TicketService extends BaseService{
           'searchDate':date,
          }
       );
-    if(!isLogin(response)){
-      Data.logout();
-      return HttpResult.error('登陆信息失效，请重新登陆');
-    }
     String html = response.data;
     int start = html.indexOf('"data":');
     int end = html.indexOf('}]}');
@@ -53,10 +49,6 @@ class TicketService extends BaseService{
       'sign_id':signId,
       'stop_name':stopName
     });
-    if(!isLogin(response)){
-      Data.logout();
-      return HttpResult.error('登陆信息失效，请重新登陆');
-    }
     var document = parse(response.data);
     String token = document.querySelector('#ticket_with_insurant > input[name="token"]').attributes['value'];
     return HttpResult.success(data: token);

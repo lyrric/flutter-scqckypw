@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/data/data_status.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
 import 'package:flutter_scqckypw/service/ticket_service.dart';
+import 'package:flutter_scqckypw/views/common_view.dart';
 import 'package:flutter_scqckypw/views/order_confirm.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -30,21 +32,36 @@ class TicketListState extends State<TicketListView> {
   //出发日期
   String _date;
 
+  //请求状态
+  RequestStatus _status = RequestStatus.LOADING;
+
   List<TicketModel> _tickets;
 
+
+
+
   TicketListState(this._fromCity, this._targetCity, this._date){
-    TicketService ticketService = TicketService();
-    ticketService.getTickets(_fromCity, _targetCity, _date).then((httpResult){
-      if(httpResult.success){
-        setState(() {
-          super.setState((){
-            _tickets =  httpResult.data;
+    initData();
+  }
+
+  initData(){
+    if(mounted){
+      setState(() {
+        _status = RequestStatus.LOADING;
+      });
+    }
+    TicketService().getTickets(_fromCity, _targetCity, _date).catchError((_){
+      super.setState(() {
+        _status = RequestStatus.NETWORK_ERROR;
+      });
+    }).then((httpResult){
+      if(httpResult != null){
+          super.setState(() {
+            _status = RequestStatus.SUCCESS;
+            _tickets = httpResult.data;
           });
-        });
-      }else{
-        Fluttertoast.showToast(msg: httpResult.errMsg);
       }
-    });
+      });
   }
 
   @override
@@ -57,17 +74,13 @@ class TicketListState extends State<TicketListView> {
       body: _getBody()
     );
   }
+
   Widget _getBody(){
-    if(_tickets == null){
-      //加载中
-      return Center(
-          child: Container(
-            width: 50,
-            height: 50,
-            child: CircularProgressIndicator(),
-          )
-      );
-    }else if(_tickets.length == 0){
+    var preWidget = PreWidget(_status, initData);
+    if(preWidget != null){
+      return preWidget;
+    }
+    if(_tickets.length == 0){
       //暂无数据
       return Center(
           child:Text('暂无数据')

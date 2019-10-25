@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/data/data_status.dart';
 import 'package:flutter_scqckypw/service/common_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -44,6 +45,25 @@ class YesNoDialog extends StatelessWidget {
   }
 }
 
+///公共方法
+Widget PreWidget(RequestStatus status, Function retryMethod){
+  if(status == RequestStatus.LOADING){
+    //加载中
+    return Center(
+        child: Container(
+          width: 50,
+          height: 50,
+          child: CircularProgressIndicator(),
+        )
+    );
+  }
+  if(status == RequestStatus.NETWORK_ERROR){
+    ///出错了
+    return NetworkErrorView(retryMethod);
+  }
+  return null;
+}
+
 ///网络异常
 class NetworkErrorView extends StatelessWidget{
 
@@ -71,7 +91,6 @@ class NetworkErrorView extends StatelessWidget{
               ),
               alignment: Alignment.center,
               child:  MaterialButton(
-                  color: Colors.blue,
                   textColor: Colors.white,
                   height: 40,
                   minWidth: 150,
