@@ -42,7 +42,7 @@ const String CANCEL_ORDER_URL = BASE_URL + '/ticketOrder/cancel';
 ///退款订单页面Url
 const String REFUND_ORDER_PAGE_URL = BASE_URL + '/cancelticket/requestRetTicket.html';
 ///退款订单接口Url
-const String REFUND_ORDER_URL = BASE_URL + '/cancelticket/requestRetTicket.html';
+const String REFUND_ORDER_URL = BASE_URL + '/cancelticket/reteraTicket.html';
 ///获取当前城市（主要是获取cookie用）
 const String COOKIE_URL = BASE_URL+'/userCommon/getCurrentCity.json';
 ///获取验证码接口Url

@@ -80,7 +80,15 @@ class _FormSate extends State<_FormView>{
               minWidth: 300,
               child: Text('登陆'),
               onPressed: (){
-                login().catchError(ExceptionHandler(context: context, retry: true, pop: true, retryMethod: login).handException);
+                login()
+                    .catchError(ExceptionHandler.toastHandler().handException)
+                    .then((_){
+                        Navigator.of(context).pop(true);
+                        Fluttertoast.showToast(
+                          msg: '登陆成功',
+                        ); })
+                    .whenComplete((){Navigator.pop(context); });
+
               },
             ),
           ),
@@ -99,18 +107,7 @@ class _FormSate extends State<_FormView>{
     if(Data.cookie.isEmpty){
       await CommonService().initCookie();
     }
-    HttpResult httpResult = await CommonService().getCaptchaCode();
-    httpResult = await LoginService().login(_usernameController.text,_passwordController.text, httpResult.data);
-    if(httpResult.success){
-      //登陆成功
-      Navigator.pop(context);
-      Navigator.of(context).pop(true);
-      Fluttertoast.showToast(
-        msg: '登陆成功',
-      );
-    }else{
-      Fluttertoast.showToast( msg: httpResult.errMsg,);
-      Navigator.pop(context);
-    }
+    String code = await CommonService().getCaptchaCode();
+    await LoginService().login(_usernameController.text,_passwordController.text, code);
   }
 }

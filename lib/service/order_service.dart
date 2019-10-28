@@ -2,6 +2,8 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
@@ -19,114 +21,123 @@ import 'package:html/parser.dart' show parse;
 class OrderService extends BaseService{
 
   ///我的订单列表
-  Future<HttpResult> myOrderList(int currentPage, String orderStatus) async {
-    try{
-      Response response = await dio.get(MY_ORDER_LIST_URL, queryParameters: {
-        'startTime':'2000-10-09',
-        'pageSize':20,
-        'currentPage':currentPage,
-        'orderState':orderStatus
-      });
-      if(!isLogin(response)){
-        Data.logout();
-        return HttpResult.error('登陆信息失效，请重新登陆');
-      }
-      var document = parse(response.data);
-      ///获取总页数，和数据总数
-      int startIndex = response.data.toString().indexOf('countPage = ');
-      int endIndex = response.data.toString().indexOf(';', startIndex);
-      int totalPage = int.parse(response.data.toString().substring(startIndex+'countPage = '.length, endIndex));
-      var pageResult = new PageResult();
-      pageResult.totalPage = totalPage;
-      startIndex = response.data.toString().indexOf('searchCount = ');
-      endIndex = response.data.toString().indexOf(';', startIndex);
-      int totalCont = int.parse(response.data.toString().substring(startIndex+'searchCount = '.length, endIndex));
-      pageResult.totalCount = totalCont;
-
-      ///获取数据
-      List<OrderList> list = new List();
-      var resultDiv = document.querySelectorAll('#hiddenresult > div');
-      for(var item in resultDiv){
-        var order = new OrderList();
-        order.payOrderId = int.parse(item.querySelectorAll(' form > table > tbody > tr > td >input')[0].attributes['value']);
-        order.tradeNumber = item.querySelectorAll('form > table > tbody > tr > td')[1].nodes[2].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
-        order.departureTime = item.querySelectorAll('form > table > tbody > tr > td')[2].nodes[0].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll('发车时间:', '');
-        order.price = double.parse(item.querySelectorAll('form > table > tbody > tr > td')[3].nodes[0].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll('总金额(元):', ''));
-        order.fromStation = item.querySelectorAll('form > table > tbody > tr')[2].querySelectorAll('td')[1].nodes[0].text;
-        order.targetStation = item.querySelectorAll('form > table > tbody > tr')[2].querySelectorAll('td')[1].nodes[2].text.replaceAll(' ', '');
-        var e = item.querySelector('form > table > tbody > tr > td > div >font');
-        if(e != null){
-          order.orderStatus = e.text;
-        }else{
-          if(item.querySelectorAll('form > table > tbody > tr > td > div > input').length == 2){
-            order.orderStatus = '待支付';
-          }else{
-            order.orderStatus = '待出行';
-          }
-
-        }
-        var subItem = item.querySelectorAll('form > table > tbody > tr');
-        var  orderDetails = new List<OrderDetail>();
-        for(int i=2;i<subItem.length;i++){
-          OrderDetail orderDetail = new OrderDetail();
-          orderDetail.price = double.parse(subItem[i].querySelectorAll('td')[2].nodes[0].text);
-          orderDetail.ticketStatus = subItem[i].querySelectorAll('td')[3].nodes[1].text;
-          orderDetail.orderId = int.parse(subItem[i].nodes[0].nodes[1].attributes['value']);
-          orderDetails.add(orderDetail);
-        }
-        order.orderDetails = orderDetails;
-        list.add(order);
-      }
-      pageResult.data = list;
-      return HttpResult.success(data:pageResult);
-    }on DioError catch(e){
-      print(e);
-      return HttpResult.error('获取订单列表失败');
+  Future<PageResult> myOrderList(int currentPage, String orderStatus) async {
+    Response response = await dio.get(MY_ORDER_LIST_URL, queryParameters: {
+      'startTime':'2000-10-09',
+      'pageSize':20,
+      'currentPage':currentPage,
+      'orderState':orderStatus
+    });
+    if(!isLogin(response)){
+      Data.logout();
+      throw BusinessError('登陆信息失效，请重新登陆');
     }
+    var document = parse(response.data);
+    ///获取总页数，和数据总数
+    int startIndex = response.data.toString().indexOf('countPage = ');
+    int endIndex = response.data.toString().indexOf(';', startIndex);
+    int totalPage = int.parse(response.data.toString().substring(startIndex+'countPage = '.length, endIndex));
+    var pageResult = new PageResult();
+    pageResult.totalPage = totalPage;
+    startIndex = response.data.toString().indexOf('searchCount = ');
+    endIndex = response.data.toString().indexOf(';', startIndex);
+    int totalCont = int.parse(response.data.toString().substring(startIndex+'searchCount = '.length, endIndex));
+    pageResult.totalCount = totalCont;
+
+    ///获取数据
+    List<OrderList> list = new List();
+    var resultDiv = document.querySelectorAll('#hiddenresult > div');
+    for(var item in resultDiv){
+      var order = new OrderList();
+      order.payOrderId = int.parse(item.querySelectorAll(' form > table > tbody > tr > td >input')[0].attributes['value']);
+      order.tradeNumber = item.querySelectorAll('form > table > tbody > tr > td')[1].nodes[2].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll(' ', '');
+      order.departureTime = item.querySelectorAll('form > table > tbody > tr > td')[2].nodes[0].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll('发车时间:', '');
+      order.price = double.parse(item.querySelectorAll('form > table > tbody > tr > td')[3].nodes[0].text.replaceAll('\n', '').replaceAll('\t', '').replaceAll('总金额(元):', ''));
+      order.fromStation = item.querySelectorAll('form > table > tbody > tr')[2].querySelectorAll('td')[1].nodes[0].text;
+      order.targetStation = item.querySelectorAll('form > table > tbody > tr')[2].querySelectorAll('td')[1].nodes[2].text.replaceAll(' ', '');
+      var e = item.querySelector('form > table > tbody > tr > td > div >font');
+      if(e != null){
+        order.orderStatus = e.text;
+      }else{
+        if(item.querySelectorAll('form > table > tbody > tr > td > div > input').length == 2){
+          order.orderStatus = '待支付';
+        }else{
+          order.orderStatus = '待出行';
+        }
+
+      }
+      var subItem = item.querySelectorAll('form > table > tbody > tr');
+      var  orderDetails = new List<OrderDetail>();
+      for(int i=2;i<subItem.length;i++){
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.price = double.parse(subItem[i].querySelectorAll('td')[2].nodes[0].text);
+        orderDetail.ticketStatus = subItem[i].querySelectorAll('td')[3].nodes[1].text;
+        orderDetail.orderId = int.parse(subItem[i].nodes[0].nodes[1].attributes['id']);
+        orderDetails.add(orderDetail);
+      }
+      order.orderDetails = orderDetails;
+      list.add(order);
+    }
+    pageResult.data = list;
+    return pageResult;
+
 
   }
   ///取消订单
-  Future<HttpResult> cancel(int payOrderId) async {
-    try{
+  Future cancel(int payOrderId) async {
       Response response = await dio.get(CANCEL_ORDER_URL, queryParameters: {
         'payOrderId':payOrderId.toString()
       });
       Map map = json.decode(response.data);
-      if(map['success']){
-        return HttpResult.success();
+      if(!map['success']){
+        throw BusinessError('取消失败');
       }
-      return HttpResult.error('取消失败');
-    }on DioError catch(e){
-      print(e);
-      return HttpResult.error('取消失败');
-    }
   }
 
   ///退款页面信息
-  Future<HttpResult> getRefundPageInfo(String ticketIds, int payOrderId) async {
-    try{
-      Response response = await dio.get(CANCEL_ORDER_URL, queryParameters: {
-        'ticket_ids':ticketIds,
-        'payorder_id':payOrderId,
-      });
-      String html = response.data;
-      int startIndex = html.indexOf('ticket = ');
-      if(startIndex == -1){
-        return HttpResult.error('获取数据失败');
-      }
-      int endIndex = html.indexOf(';');
-      String jsonStr = html.substring(startIndex+'ticket = '.length, endIndex);
-      Map map = json.decode(jsonStr);
-      List<RefundInfo> list = new List();
-      for(int i = 0;i<map.length;i++){
-        RefundInfo refundInfo = RefundInfo.fromJson(map[i]);
-        list.add(refundInfo);
-      }
-      return HttpResult.success(data:list);
-    }on DioError catch(e){
-      print(e);
-      return HttpResult.error('获取数据失败');
+  Future<Map<String, dynamic>> getRefundPageInfo(String ticketIds, int payOrderId) async {
+    Response response = await dio.get(REFUND_ORDER_PAGE_URL, queryParameters: {
+      'ticket_ids':ticketIds,
+      'payorder_id':payOrderId,
+    });
+    String html = response.data;
+    int startIndex = html.indexOf('ticket = ');
+    if(startIndex == -1){
+      throw NetworkError();
     }
+    var resultMap = new Map<String, dynamic>();
+    var document = parse(html);
+    var openId = document.querySelector('input[name=oepnId]').attributes['value'];
+    var ticketId = document.querySelector('input[name=ticket_id]').attributes['value'];
+    var applyId = document.querySelector('input[name=apply_id]').attributes['value'];
+    resultMap['openId'] = openId;
+    resultMap['ticketId'] = ticketId;
+    resultMap['applyId'] = applyId;
+    int endIndex = html.indexOf(';', startIndex);
+    String jsonStr = html.substring(startIndex+'ticket = '.length, endIndex);
+    var map = json.decode(jsonStr);
+    List<RefundInfo> list = new List();
+    for(int i = 0;i<map.length;i++){
+      RefundInfo refundInfo = RefundInfo.fromJson(map[i]);
+      list.add(refundInfo);
+    }
+    resultMap['data'] = list;
+    return resultMap;
+  }
+
+  ///退款页面信息
+  Future<bool> refund(String openId, String ticketId, String applyId) async {
+    Response response = await dio.get(REFUND_ORDER_URL, queryParameters: {
+      'openId': openId,
+      'ticket_id': ticketId,
+      'apply_id': applyId,
+      'back_fail_code': '出行安排改变',
+    });
+    String html = response.data;
+    if(html.indexOf('退票成功') == -1){
+      throw new BusinessError('退票失败');
+    }
+    return true;
   }
 
   ///是否有未支付订单
@@ -139,15 +150,15 @@ class OrderService extends BaseService{
   }
 
   ///下单
-  Future<HttpResult> order(TicketModel ticketModel, List<Passenger> passengers, String contactName, String phone,String token, String captureCode) async {
+  Future<int> order(TicketModel ticketModel, List<Passenger> passengers, String contactName, String phone,String token, String captureCode) async {
     if(await _havePayingOrder()){
-      return HttpResult.error('你还有未支付的订单');
+      throw BusinessError('你还有未支付的订单');
     }
    return _lockTicket(ticketModel, passengers, contactName, phone, token, captureCode);
 
   }
   ///锁定车票
-  Future<HttpResult> _lockTicket(TicketModel ticketModel, List<Passenger> passengers, String contactName, String phone,String token, String captureCode) async {
+  Future<int> _lockTicket(TicketModel ticketModel, List<Passenger> passengers, String contactName, String phone,String token, String captureCode) async {
     var para = new Map<String, dynamic> ();
     para['contact_name'] = contactName;
     para['phone_num'] = phone;
@@ -174,36 +185,21 @@ class OrderService extends BaseService{
       para['bring_child'+(i+1).toString()] = 0;
     }
     Response response;
-    try{
-      response = await dio.post(LOCK_TICKET_URL,queryParameters: para);
-    }on DioError catch(e){
-      if(e.type == DioErrorType.RESPONSE){
-        response = e.response;
-      }else{
-        print(e.toString());
-        return HttpResult.error('锁定车票失败');
-      }
-    }
+    response = await dio.post(LOCK_TICKET_URL,queryParameters: para);
     String referer = response.headers.value('Location');
     if(referer.indexOf('errMsg') != -1){
-      return HttpResult.error('锁定车票失败');
+      throw BusinessError('锁定车票失败');
     }
     String orderId= referer.split('=')[1];
-    return HttpResult.success(data:int.parse(orderId));
+    return int.parse(orderId);
   }
 
 
   ///获取待支付的订单信息
-  Future<HttpResult> getUnPayOrderDetail (int orderId) async {
-    Response response;
-    try{
-      response = await dio.get(CHOOSE_PAY_WAY_URL, queryParameters: {
+  Future<List<PayOrderInfo>> getUnPayOrderDetail (int orderId) async {
+    Response response = await dio.get(CHOOSE_PAY_WAY_URL, queryParameters: {
         'pay_order_id':orderId
       });
-    }on DioError catch(e){
-      print(e);
-      return HttpResult.error('车票已过期 请重新购票');
-    }
     var document = parse(response.data);
     var list = document.querySelectorAll('#rnbox4');
     List<PayOrderInfo> data = new List();
@@ -218,7 +214,7 @@ class OrderService extends BaseService{
       payOrderInfo.idNumber = document.querySelectorAll('#box3 > div.em_lst > ul > li.c3')[i].text.replaceAll('\n', '').replaceAll('\t', '');
       data.add(payOrderInfo);
     }
-    return HttpResult.success(data:data);
+    return data;
   }
 
   ///获取待付款订单的数据

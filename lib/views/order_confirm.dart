@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
 import 'package:flutter_scqckypw/service/common_service.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_scqckypw/service/passenger_service.dart';
 import 'package:flutter_scqckypw/service/ticket_service.dart';
 import 'package:flutter_scqckypw/views/common_view.dart';
 import 'package:flutter_scqckypw/views/order_pay.dart';
+import 'package:flutter_scqckypw/views/passenger/passenger_mgr.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -50,26 +52,20 @@ class _Body extends State<TicketOrderConfirm> {
 
   ///加载常用乘车人
   _loadUserPassengers() {
-    PassengerService().getPassengers(1).then((httpResult) {
-      if(httpResult.success){
-        setState(() {
-          _userPassengers = httpResult.data;
-        });
-      }else{
-        Fluttertoast.showToast(msg: httpResult.errMsg);
-      }
-    });
+    PassengerService().getPassengers(1).then((data) {
+      _userPassengers = data;
+    }).catchError((error){
+      Fluttertoast.showToast(msg: '加载乘车人失败');
+    }).whenComplete((){setState(() {
+
+    });});
   }
+
   _initToken(){
     _ticketService.getOrderPageToken(_tickerMode.carryStaId, _tickerMode.departureTime, _tickerMode.signId, _tickerMode.targetStation)
-        .then((httpResult){
-          if(httpResult.success){
-            _token = httpResult.data;
-          }else{
-            Fluttertoast.showToast(msg: httpResult.errMsg);
-            Navigator.pop(context);
-          }
-    });
+        .catchError((error){ })
+        .then((data){_token = data;})
+        .whenComplete((){setState(() {});});
   }
 
   @override
@@ -162,25 +158,14 @@ class _Body extends State<TicketOrderConfirm> {
                   showDialog(context: context, builder: (_){
                     return LoadingDialog(text:'创建订单中，请勿返回');
                   });
-                  CommonService().getCaptchaCode().then((httpResult){
-                    if(httpResult.success){
-                      orderService.order(_tickerMode, _selectedPassengers, _contactNameCtrl.text, _contactNameCtrl.text, _token, httpResult.data)
-                          .then((httpResult){
-                        if(httpResult.success){
-                          Navigator.pop(context);
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_){
-                            return OrderPayingView(httpResult.data);
-                          }));
-                        }else{
-                          Navigator.pop(context);
-                          Fluttertoast.showToast(msg: httpResult.errMsg);
-                        }
-                      });
-                    }else{
-                      Navigator.pop(context);
-                      Fluttertoast.showToast(msg: httpResult.errMsg);
-                    }
-                  });
+                  CommonService().getCaptchaCode().then((code){
+                      orderService.order(_tickerMode, _selectedPassengers, _contactNameCtrl.text, _contactNameCtrl.text, _token, code)
+                          .then((data){
+                              Navigator.pop(context);
+                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_){
+                                return OrderPayingView(data);
+                              })); });
+                  }).catchError(ExceptionHandler(pop: true, showErrorType: ShowErrorType.TOAST).handException);
                 },
               ),
             ),
@@ -216,7 +201,15 @@ class _Body extends State<TicketOrderConfirm> {
               ),
             ],
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_){
+              return PassengerMgrView();
+            })).whenComplete((){
+             setState(() {
+               _loadUserPassengers();
+             });
+            });
+          },
         ),
       );
     } else {

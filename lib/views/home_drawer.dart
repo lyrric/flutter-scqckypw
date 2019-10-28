@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/service/user_service.dart';
 import 'package:flutter_scqckypw/views/common_view.dart';
@@ -153,13 +154,11 @@ class _UserDrawerHeaderStat extends State<_UserDrawerHeader>{
         onPressed: (){
           Navigator.of(context).push(MaterialPageRoute(builder:(_){
             return LoginView();
-          })).then((res){
-            if(res != null && res){
-              _userService.getUser().then((_){
-                setState(() {
-
-                });
-              });
+          })).then((_){
+            if(Data.isLogin){
+                _userService.getUser().then((_){
+                  setState(() {});
+                }).catchError(ExceptionHandler.toastHandler().handException);
             }
           });
         },

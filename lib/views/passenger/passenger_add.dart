@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/service/passenger_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../common_view.dart';
 
 class PassengerAddView extends StatefulWidget{
 
@@ -157,17 +160,17 @@ class _PassengerAddState extends State{
               textColor: Colors.white,
               child: Text('保存',),
               onPressed: (){
+                showDialog(context: context, builder: (_){
+                  return new LoadingDialog(text:'保存中...');
+                });
                 _passenger.realName = _nameCtrl.text;
                 _passenger.idNumber = _idNoCtrl.text;
-                _passengerService.add(_passenger).then((httpResult){
-                  if(!httpResult.success){
-                    Fluttertoast.showToast(msg: httpResult.errMsg);
-                  }else{
-                    Fluttertoast.showToast(msg: '保存成功').then((_){
-                      Navigator.of(context).pop(true);
-                    });
-                  }
-                });
+                _passengerService.add(_passenger).then((_){
+                      Fluttertoast.showToast(msg: '保存成功').then((_){
+                        Navigator.of(context).pop(true);
+                      });})
+                    .catchError(ExceptionHandler.toastHandler().handException)
+                    .whenComplete((){ Navigator.of(context).pop(true); });
               },
             ),
           ),

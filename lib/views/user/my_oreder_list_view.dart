@@ -89,6 +89,7 @@ class _BodyStat extends State{
   int totalCount = 0;
   int totalPage;
 
+
   List<OrderList> _orders;
 
   String _orderStatus;
@@ -107,28 +108,24 @@ class _BodyStat extends State{
     }
     if(!_isLoading){
       _isLoading = true;
-      _orderService.myOrderList(_currentPage, _orderStatus).then((httpResult){
+      _orderService.myOrderList(_currentPage, _orderStatus).catchError((error){
+
+      }).then((data){
         _isLoading = false;
-        if(httpResult.success){
           if(_orders == null){
             _orders = new List();
           }
-          PageResult pageResult = httpResult.data;
+          PageResult pageResult = data;
           totalPage = pageResult.totalPage;
           totalCount = pageResult.totalCount;
-
           if(totalCount != 0){
             _currentPage++;
             _orders.addAll(pageResult.data);
-            if(mounted){
-              setState(() {});
-            }
           }
-
-        }else{
-          Fluttertoast.showToast(msg: httpResult.errMsg);
-        }
-      });
+      }).whenComplete((){
+        if(mounted){
+        setState(() {});
+      }});
     }
   }
 

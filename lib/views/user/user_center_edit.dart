@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
 import 'package:flutter_scqckypw/util/data_util.dart';
 import 'package:flutter_scqckypw/service/user_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -183,15 +184,12 @@ class _BodyState extends State<_Body>{
                   return new LoadingDialog(text:'保存中...');
                 });
                 _userService.updateInfo(_realName, _sex, _idType, _idNo)
-                    .then((httpResult){
-                      if(httpResult.success){
-                        Navigator.pop(context);
-                        Fluttertoast.showToast(msg: '保存成功');
-                        Navigator.of(context).pop(true);
-                      }else{
-                        Fluttertoast.showToast(msg: httpResult.errMsg);
-                      }
-                });
+                    .then((_){
+                          Fluttertoast.showToast(msg: '保存成功');
+                          Navigator.of(context).pop(true); })
+                    .catchError(ExceptionHandler.toastHandler().handException)
+                    .whenComplete((){
+                  Navigator.of(context).pop(true); });
             },
           ),
         ),

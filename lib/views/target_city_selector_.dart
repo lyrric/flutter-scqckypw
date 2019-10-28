@@ -16,11 +16,7 @@ class TargetCitySelector extends SearchDelegate<TargetCityModel> {
 
   State state;
 
-  TargetCitySelector(this._fromCityId, this.state){
-//    cityService.getTargetCityList(_fromCityId, 'a').then((data){
-//      _targetCityList = data;
-//    });
-  }
+  TargetCitySelector(this._fromCityId, this.state);
 
   getTargetCityList(){
     cityService.getTargetCityList(_fromCityId, 'a').then((data){

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
@@ -23,19 +24,23 @@ class CommonService extends BaseService{
   }
 
   ///获取验证码
-  Future<HttpResult> getCaptchaCode( )async {
+  Future<String> getCaptchaCode( )async {
     Response response = await dio.get(CAPTCHA_CODE_URL,
       queryParameters: {
         'cookie':Data.cookie,
       },
     );
-    return HttpResult.fromJson(response.data);
+    HttpResult httpResult = HttpResult.fromJson(response.data);
+    if(httpResult.success){
+      return httpResult.data;
+    }else{
+      throw BusinessError(httpResult.errMsg);
+    }
   }
 
   ///初始化获取cookie
-  Future<HttpResult> initCookie() async{
+  Future initCookie() async{
     await dio.get(COOKIE_URL);
-    return HttpResult.success();
   }
 
 }

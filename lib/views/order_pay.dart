@@ -35,19 +35,17 @@ class _OrderPayingState extends State {
 
   bool isPay = false;
 
+
   _OrderPayingState(this.orderId){
-    _orderService.getUnPayOrderDetail(orderId).then((HttpResult result){
-      if(result.success){
-        setState(() {
-          _orderInfo = result.data;
-          _orderInfo.forEach((item){
-            _totalPrice+=item.prices;
-          });
-        });
-      }else{
-        Fluttertoast.showToast(msg: result.errMsg);
-      }
-    });
+    _orderService.getUnPayOrderDetail(orderId)
+        .catchError((error){ })
+        .then((data){
+            _orderInfo = data;
+            _orderInfo.forEach((item){
+              _totalPrice+=item.prices;
+            });
+        })
+        .whenComplete((){setState(() {});});
   }
 
   @override

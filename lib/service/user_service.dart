@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
@@ -13,11 +14,11 @@ import 'package:html/parser.dart' show parse;
 class UserService extends BaseService{
   
   ///获取用户基本信息
-  Future<HttpResult> getUser() async {
+  Future<UserModel> getUser() async {
     Response response = await dio.get(USER_CENTER_URL);
     if(!isLogin(response)){
       Data.logout();
-      return HttpResult.error('登陆信息失效，请重新登陆');
+      throw BusinessError('登陆信息失效，请重新登陆');
     }
     String html = response.data;
     var document = parse(html);
@@ -39,11 +40,11 @@ class UserService extends BaseService{
     email = email == '空'?'未绑定邮箱':email;
     user.email = email;
     Data.user = user;
-    return HttpResult.success(data: user);
+    return user;
   }
 
   ///更新用户
-  Future<HttpResult> updateInfo(String realName, String sex, String idType, String idNo) async {
+  Future updateInfo(String realName, String sex, String idType, String idNo) async {
     Response response = await dio.post(USER_UPDATE_URL
         ,queryParameters:{
         'name':realName,
@@ -52,10 +53,8 @@ class UserService extends BaseService{
         'idNo':idNo,
       });
     Map<String, dynamic> map = json.decode(response.data);
-    if(map['success']){
-      return HttpResult.success();
-    }else{
-      return HttpResult.error(map['msg']);
+    if(!map['success']){
+      throw BusinessError(map['msg']);
     }
   }
 }

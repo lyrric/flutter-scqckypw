@@ -1,6 +1,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
+import 'package:flutter_scqckypw/data/data_status.dart';
 import 'package:flutter_scqckypw/util/data_util.dart';
 import 'package:flutter_scqckypw/model/passenger_model.dart';
 import 'package:flutter_scqckypw/service/passenger_service.dart';
@@ -25,19 +27,24 @@ class _PassengerMgrState extends State<PassengerMgrView> {
 
   PassengerService _passengerService = new PassengerService();
 
+  var _status = RequestStatus.LOADING;
+
   List<Passenger> _passengers;
 
   void _initPassenger(){
-    _passengerService.getPassengers(1).then((httpResult){
-      if(httpResult.success){
-        setState(() {
-          _passengers = httpResult.data;
-        });
-      }else{
-        Fluttertoast.showToast(msg: httpResult.errMsg);
-      }
-
-    });
+    if(mounted){
+      setState(() {
+        _status = RequestStatus.LOADING;
+      });
+    }
+    _passengerService.getPassengers(1)
+        .then((data){
+          _status = RequestStatus.SUCCESS;
+          _passengers = data;})
+        .catchError((_){
+          Fluttertoast.showToast(msg: '获取数据失败');
+          _status = RequestStatus.NETWORK_ERROR;})
+        .whenComplete((){setState(() { });});
   }
   @override
   Widget build(BuildContext context) {
@@ -48,33 +55,41 @@ class _PassengerMgrState extends State<PassengerMgrView> {
         centerTitle: true,
         title: Text('乘车人管理'),
       ),
-      body: Column(
-        children: <Widget>[
-          Container(height: 10,),
-          Container(
-              height: 40,
-              alignment: Alignment.center,
-              color: Colors.white,
-              child: FlatButton(
-                padding: EdgeInsets.zero,
-                child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(Icons.add_circle_outline, color: Colors.blue,),
-                    Text(' 添加乘客', style: TextStyle(color: Colors.blue),)
-                  ],
-                ),
-                onPressed: () {
-                  Navigator.of(context).push(new MaterialPageRoute(builder: (_){
-                    return new PassengerAddView();
-                  }));
-                },
-              )
-          ),
-          Container(height: 10,),
-          passengerListWidget(),
-        ],
-      ),
+      body: _body(),
+    );
+  }
+
+  Widget _body(){
+    var preWidget = PreWidget(_status, _initPassenger);
+    if(preWidget != null){
+      return preWidget;
+    }
+    return Column(
+      children: <Widget>[
+        Container(height: 10,),
+        Container(
+            height: 40,
+            alignment: Alignment.center,
+            color: Colors.white,
+            child: FlatButton(
+              padding: EdgeInsets.zero,
+              child: new Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.add_circle_outline, color: Colors.blue,),
+                  Text(' 添加乘客', style: TextStyle(color: Colors.blue),)
+                ],
+              ),
+              onPressed: () {
+                Navigator.of(context).push(new MaterialPageRoute(builder: (_){
+                  return new PassengerAddView();
+                }));
+              },
+            )
+        ),
+        Container(height: 10,),
+        passengerListWidget(),
+      ],
     );
   }
   ///当修改，新增时，删除时重新获取数据
@@ -157,7 +172,7 @@ class _PassengerItem extends StatelessWidget{
                       if(val != null && val){
                         _passengerService.delete(_passenger.id).then((result){
                           onUpdate(true);
-                        });
+                        }).catchError(ExceptionHandler.toastHandler().handException);
                       }
                     });
                   }),

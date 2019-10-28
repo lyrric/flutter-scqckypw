@@ -50,18 +50,14 @@ class TicketListState extends State<TicketListView> {
         _status = RequestStatus.LOADING;
       });
     }
-    TicketService().getTickets(_fromCity, _targetCity, _date).catchError((_){
-      super.setState(() {
+    TicketService().getTickets(_fromCity, _targetCity, _date).then((data){
+          _status = RequestStatus.SUCCESS;
+          _tickets = data;
+    }).catchError((_){
         _status = RequestStatus.NETWORK_ERROR;
-      });
-    }).then((httpResult){
-      if(httpResult != null){
-          super.setState(() {
-            _status = RequestStatus.SUCCESS;
-            _tickets = httpResult.data;
-          });
-      }
-      });
+    }).whenComplete((){setState(() {
+
+    });});
   }
 
   @override
@@ -71,11 +67,11 @@ class TicketListState extends State<TicketListView> {
         title: Text('${_fromCity.name} - ${_targetCity.name}'),
         centerTitle: true,
       ),
-      body: _getBody()
+      body: _Body()
     );
   }
 
-  Widget _getBody(){
+  Widget _Body(){
     var preWidget = PreWidget(_status, initData);
     if(preWidget != null){
       return preWidget;

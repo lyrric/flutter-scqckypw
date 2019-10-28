@@ -26,7 +26,7 @@ class DioInterceptor extends InterceptorsWrapper{
       List cookies = response.headers['set-cookie'];
       if(cookies != null && cookies.length > 0){
         for(String cookie in cookies){
-          if(cookie.startsWith('JSESSIONID')){
+          if(cookie.startsWith('JSESSIONID') && cookie != Data.cookie){
             Data.logout();
             Data.cookie = cookie;
           }
