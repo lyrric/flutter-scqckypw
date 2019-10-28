@@ -41,14 +41,20 @@ class _PassengerMgrState extends State<PassengerMgrView> {
         .then((data){
           _status = RequestStatus.SUCCESS;
           _passengers = data;})
-        .catchError((_){
-          Fluttertoast.showToast(msg: '获取数据失败');
+        .catchError((err){
+          print(err.toString());
+          //Fluttertoast.showToast(msg: '获取数据失败');
           _status = RequestStatus.NETWORK_ERROR;})
         .whenComplete((){setState(() { });});
   }
+
+
+  _PassengerMgrState(){
+    _initPassenger();
+  }
+
   @override
   Widget build(BuildContext context) {
-    _initPassenger();
     return new Scaffold(
       backgroundColor: Color(0xFFF0EFF4),
       appBar: new AppBar(

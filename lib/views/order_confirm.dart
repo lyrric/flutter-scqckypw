@@ -56,16 +56,22 @@ class _Body extends State<TicketOrderConfirm> {
       _userPassengers = data;
     }).catchError((error){
       Fluttertoast.showToast(msg: '加载乘车人失败');
-    }).whenComplete((){setState(() {
-
-    });});
+    }).whenComplete((){
+      if(mounted){
+        setState(() {});
+      }
+    });
   }
 
   _initToken(){
     _ticketService.getOrderPageToken(_tickerMode.carryStaId, _tickerMode.departureTime, _tickerMode.signId, _tickerMode.targetStation)
         .catchError((error){ })
         .then((data){_token = data;})
-        .whenComplete((){setState(() {});});
+        .whenComplete((){
+          if(mounted){
+            setState(() {});
+          }
+    });
   }
 
   @override
@@ -202,7 +208,7 @@ class _Body extends State<TicketOrderConfirm> {
             ],
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_){
+            Navigator.of(context).push(MaterialPageRoute(builder: (_){
               return PassengerMgrView();
             })).whenComplete((){
              setState(() {
@@ -273,7 +279,15 @@ class _Body extends State<TicketOrderConfirm> {
                                 ],
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (_){
+                                return PassengerMgrView();
+                              })).whenComplete((){
+                                setState(() {
+                                  _loadUserPassengers();
+                                });
+                              });
+                            },
                           );
                         }
 

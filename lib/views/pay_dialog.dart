@@ -33,6 +33,7 @@ class _State extends State{
   _State(this.initialUrl){
     flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged data) {
       String url = data.url;
+      print(url);
       if(url.startsWith('alipay') || url.startsWith('tbopen')){
         _lunch(url);
       }

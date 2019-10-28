@@ -185,7 +185,16 @@ class OrderService extends BaseService{
       para['bring_child'+(i+1).toString()] = 0;
     }
     Response response;
-    response = await dio.post(LOCK_TICKET_URL,queryParameters: para);
+    try{
+      response = await dio.post(LOCK_TICKET_URL,queryParameters: para);
+    }on DioError catch(e){
+      if(e.type == DioErrorType.RESPONSE){
+        response = e.response;
+      }else{
+        print(e.toString());
+        throw BusinessError('创建订单失败');
+      }
+    }
     String referer = response.headers.value('Location');
     if(referer.indexOf('errMsg') != -1){
       throw BusinessError('锁定车票失败');

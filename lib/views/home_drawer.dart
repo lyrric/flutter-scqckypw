@@ -47,9 +47,12 @@ class _HomeDrawerStat extends State{
             leading: CircleAvatar(child: Text('B'), ),
             title: Text("我的订单"),
             onTap: (){
-              Navigator.of(context).push(MaterialPageRoute(builder: (_){
-                return MyOrderListView();
-              }));
+              if(Data.isLogin){
+                Navigator.of(context).push(MaterialPageRoute(builder: (_){
+                  return MyOrderListView();
+                }));
+              }
+
             },
           ),
         ),
@@ -58,7 +61,7 @@ class _HomeDrawerStat extends State{
             leading: CircleAvatar(child: Text('C'), ),
             title: Text("常用乘车人"),
             onTap: (){
-              if(Data.cookie.isNotEmpty){
+              if(Data.isLogin){
                 Navigator.of(context).push(MaterialPageRoute(builder: (_){
                   return PassengerMgrView();
                 }));
@@ -73,7 +76,7 @@ class _HomeDrawerStat extends State{
             onTap: (){},
           ),
         ),
-        Data.cookie.isEmpty?Text(''):ClipRect(
+        !Data.isLogin?Text(''):ClipRect(
           child: ListTile(
             leading: CircleAvatar(child: Text('D'), ),
             title: Text("退出登陆"),
@@ -152,13 +155,14 @@ class _UserDrawerHeaderStat extends State<_UserDrawerHeader>{
           ],
         ),
         onPressed: (){
+          if(Data.isLogin) return;
           Navigator.of(context).push(MaterialPageRoute(builder:(_){
             return LoginView();
           })).then((_){
             if(Data.isLogin){
-                _userService.getUser().then((_){
-                  setState(() {});
-                }).catchError(ExceptionHandler.toastHandler().handException);
+                _userService.getUser().then((_){ setState(() {
+
+                });}).catchError(ExceptionHandler.toastHandler().handException);
             }
           });
         },

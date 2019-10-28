@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
+import 'package:flutter_scqckypw/data/data_status.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/model/pay_order_info.dart';
@@ -29,23 +31,39 @@ class _OrderPayingState extends State {
   ///总共价格
   double _totalPrice = 0.0;
 
+  var _status = RequestStatus.LOADING;
+
   var _orderService = OrderService();
 
   final int orderId;
 
   bool isPay = false;
 
+  _initData(){
+    _status = RequestStatus.LOADING;
 
-  _OrderPayingState(this.orderId){
     _orderService.getUnPayOrderDetail(orderId)
-        .catchError((error){ })
         .then((data){
-            _orderInfo = data;
-            _orderInfo.forEach((item){
-              _totalPrice+=item.prices;
-            });
+          _status = RequestStatus.SUCCESS;
+          _orderInfo = data;
+          _orderInfo.forEach((item){
+            _totalPrice+=item.prices;
+          });
         })
+        .catchError((error){
+          if(error is BusinessError){
+            _status = RequestStatus.BUSINESS_ERROR;
+          }else{
+            _status = RequestStatus.NETWORK_ERROR;
+          }})
         .whenComplete((){setState(() {});});
+    if(mounted){
+      setState(() {});
+    }
+
+  }
+  _OrderPayingState(this.orderId){
+    _initData();
   }
 
   @override
@@ -55,113 +73,119 @@ class _OrderPayingState extends State {
       appBar: AppBar(
         title: Text('订单详情'),
       ),
-      body:   _orderInfo==null? LoadingDialog():Container(
-        padding: EdgeInsets.only(left: 5, right: 5),
-        child: ListView(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                ///车票
-                Container(
-                  decoration:  BoxDecoration(
-                    color: Colors.white, // 底色
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        decoration:  BoxDecoration(
-                          color: Colors.white, // 底色
-                        ),
-                        height: 50,
-                        margin: EdgeInsets.only(left: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Container(
-                              child:  Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  Container(
-                                    alignment: Alignment.center,
-                                    width: 100,
-                                    //decoration: new
-                                    child: Text(_orderInfo[0].fromStation,style: TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
-                                  ),
-                                  Container(
-                                    alignment: Alignment.center,
-                                    width: 80,
-                                    child:  Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(_orderInfo[0].date,style: TextStyle(fontSize: 10)),
-                                        Image.asset("images/arrow_right.png", width: 80, height: 10,),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    alignment: Alignment.center,
-                                    width: 100,
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Text(_orderInfo[0].targetStation,style: TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+      body:  _body(),
+    );
+  }
+
+  Widget _body(){
+    var preWidget = PreWidget(_status, _initData);
+    if(preWidget != null){
+      return preWidget;
+    }
+    return Container(
+      padding: EdgeInsets.only(left: 5, right: 5),
+      child: ListView(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              ///车票
+              Container(
+                decoration:  BoxDecoration(
+                  color: Colors.white, // 底色
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      decoration:  BoxDecoration(
+                        color: Colors.white, // 底色
                       ),
-                      Divider(height: 5,color: Colors.blue,),
-                    ],
+                      height: 50,
+                      margin: EdgeInsets.only(left: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Container(
+                            child:  Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                Container(
+                                  alignment: Alignment.center,
+                                  //decoration: new
+                                  child: Text(_orderInfo[0].fromStation,style: TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 10,right: 10),
+                                  alignment: Alignment.center,
+                                  child:  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(_orderInfo[0].date,style: TextStyle(fontSize: 10)),
+                                      Image.asset("images/arrow_right.png", width: 80, height: 10,),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  alignment: Alignment.center,
+                                  child: Text(_orderInfo[0].targetStation,style: TextStyle(fontSize: 15), overflow: TextOverflow.ellipsis,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(height: 5,color: Colors.blue,),
+                  ],
+                ),
+              ),
+
+            ],
+          ),
+          Container(
+            height: 10,
+          ),
+          Container(
+            decoration: BoxDecoration(color: Colors.white),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(top: 5),
+                  child: Text(
+                    '乘客',
+                    style: TextStyle(fontSize: 12),
                   ),
                 ),
-
+                Container(
+                  padding: EdgeInsets.only(bottom: 5),
+                  alignment: Alignment.center,
+                  child: _userPassengerWidget(),
+                ),
               ],
             ),
-            Container(
-              height: 10,
+          ),
+          Container(
+            height: 10,
+          ),
+          Container(
+            decoration: BoxDecoration(color: Colors.white),
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text('总价'),
+                Text('￥$_totalPrice', style: TextStyle(color: Colors.deepOrangeAccent,),),
+              ],
             ),
-            Container(
-              decoration: BoxDecoration(color: Colors.white),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(top: 5),
-                    child: Text(
-                      '乘客',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(bottom: 5),
-                    alignment: Alignment.center,
-                    child: _userPassengerWidget(),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: 10,
-            ),
-            Container(
-              decoration: BoxDecoration(color: Colors.white),
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('总价'),
-                  Text('￥$_totalPrice', style: TextStyle(color: Colors.deepOrangeAccent,),),
-                ],
-              ),
-            ),
-            Container(
-              decoration: BoxDecoration(),
-              height: 10,
-            ),
-            Container(
-              alignment: Alignment.center,
-              child: MaterialButton(
+          ),
+          Container(
+            decoration: BoxDecoration(),
+            height: 10,
+          ),
+          Container(
+            alignment: Alignment.center,
+            child: MaterialButton(
                 color: Colors.blue,
                 textColor: Colors.white,
                 height: 40,
@@ -174,14 +198,12 @@ class _OrderPayingState extends State {
                     _gotoPay('alipay');
                   }
                 }
-              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
-
   ///去支付
   _gotoPay(String payWay) async {
      showDialog(context: context, builder: (_){

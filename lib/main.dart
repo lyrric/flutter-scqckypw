@@ -123,7 +123,7 @@ class _BodyState extends State<_Body>{
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
-                    width: 100,
+                    width: 150,
                     child:  Column(
                       children: <Widget>[
                         FlatButton(
@@ -146,11 +146,11 @@ class _BodyState extends State<_Body>{
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 40, right: 50),
+                    margin: EdgeInsets.only(left: 20, right: 20),
                     child: Icon(Icons.arrow_forward),
                   ),
                   Container(
-                    width: 100,
+                    width: 150,
                     child:  Column(
                       children: <Widget>[
                         FlatButton(
