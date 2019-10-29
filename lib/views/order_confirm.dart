@@ -48,6 +48,7 @@ class _Body extends State<TicketOrderConfirm> {
 
   _Body(this._tickerMode){
     _initToken();
+    _loadUserPassengers();
   }
 
   ///加载常用乘车人
@@ -76,7 +77,6 @@ class _Body extends State<TicketOrderConfirm> {
 
   @override
   Widget build(BuildContext context) {
-    _loadUserPassengers();
     return Scaffold(
       backgroundColor: Color(0xFFF0EFF4),
       appBar: AppBar(
@@ -159,20 +159,7 @@ class _Body extends State<TicketOrderConfirm> {
                 height: 40,
                 minWidth: 350,
                 child: Text('立刻预定'),
-                onPressed: () {
-                  //正确
-                  showDialog(context: context, builder: (_){
-                    return LoadingDialog(text:'创建订单中，请勿返回');
-                  });
-                  CommonService().getCaptchaCode().then((code){
-                      orderService.order(_tickerMode, _selectedPassengers, _contactNameCtrl.text, _contactNameCtrl.text, _token, code)
-                          .then((data){
-                              Navigator.pop(context);
-                              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_){
-                                return OrderPayingView(data);
-                              })); });
-                  }).catchError(ExceptionHandler(pop: true, showErrorType: ShowErrorType.TOAST).handException);
-                },
+                onPressed: _goToPay,
               ),
             ),
           ],
@@ -181,6 +168,21 @@ class _Body extends State<TicketOrderConfirm> {
     );
   }
 
+  _goToPay(){
+    //正确
+    showDialog(context: context, builder: (_){
+      return LoadingDialog(text:'创建订单中，请勿返回');
+    });
+    CommonService().getCaptchaCode().then((code){
+      orderService.order(_tickerMode, _selectedPassengers, _contactNameCtrl.text, _contactNameCtrl.text, _token, code)
+          .then((data){
+        Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: '锁定车票成功，请在30分钟内支付');
+        Navigator.pop(context);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_){
+          return OrderPayingView(data);
+        })); });
+    }).catchError(ExceptionHandler.popAndToastHandler(context).handException);
+  }
   ///选择乘客
   Widget _userPassengerWidget() {
     if (_userPassengers == null) {

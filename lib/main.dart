@@ -9,8 +9,10 @@ import 'package:flutter_scqckypw/views/city_selector.dart';
 import 'package:flutter_scqckypw/views/common_view.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
 import 'package:flutter_scqckypw/views/order_pay.dart';
+import 'package:flutter_scqckypw/views/pay_dialog.dart';
 import 'package:flutter_scqckypw/views/target_city_selector_.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(MyApp());
 
@@ -201,10 +203,11 @@ class _BodyState extends State<_Body>{
                   minWidth: 350,
                   child: Text('查询'),
                   onPressed: (){
+                   /* showDialog(context: context, builder: (_){
+                      return PayWebDialog('', 2, '');
+                    });*/
                     Navigator.of(_topContext).push(MaterialPageRoute(builder: (_){
                       return TicketListView(_fromCity, _targetCity, _getDateString());
-                      //return PayWebView('https://www.scqckypw.com/user/index.html');
-                      //return OrderPayingView(sssssss);
                     }));
                   },
                 ),

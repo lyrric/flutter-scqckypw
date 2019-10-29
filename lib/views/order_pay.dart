@@ -8,6 +8,7 @@ import 'package:flutter_scqckypw/model/pay_order_info.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/views/pay_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'common_view.dart';
 
@@ -35,17 +36,19 @@ class _OrderPayingState extends State {
 
   var _orderService = OrderService();
 
+  int _payType;
+
   final int orderId;
 
-  bool isPay = false;
+  int _peyStatus = 2;
 
   _initData(){
     _status = RequestStatus.LOADING;
-
     _orderService.getUnPayOrderDetail(orderId)
-        .then((data){
+        .then((map){
           _status = RequestStatus.SUCCESS;
-          _orderInfo = data;
+          _payType = map['type'];
+          _orderInfo = map['data'];
           _orderInfo.forEach((item){
             _totalPrice+=item.prices;
           });
@@ -190,12 +193,14 @@ class _OrderPayingState extends State {
                 textColor: Colors.white,
                 height: 40,
                 minWidth: 350,
-                child: isPay?Text('支付成功，返回'):Text('支付'),
-                onPressed: () async {
-                  if(isPay){
+                child: Text(_getButtonText()),
+                onPressed: () {
+                  if(_peyStatus == 1){
                     Navigator.pop(context);
-                  }else{
+                  }else if(_peyStatus == 2){
                     _gotoPay('alipay');
+                  }else {
+
                   }
                 }
             ),
@@ -206,23 +211,50 @@ class _OrderPayingState extends State {
   }
   ///去支付
   _gotoPay(String payWay) async {
-     showDialog(context: context, builder: (_){
-       return PayWebDialog(PAY_MIDDLE_URL+'?payid='+orderId.toString()+'&plateform='+payWay);
-     }).then((result){
-       if(result != null && result){
-         //付款成功
-         showDialog(context: context, builder: (_){
-           return MessageDialog('付款成功');
-         }).then((_){
-           setState(() {
-             isPay = true;
-           });
+    PayWebDialog dialog;
+    if(_payType == 1) {
+      dialog = PayWebDialog(
+          PAY_MIDDLE_URL + '?payid=' + orderId.toString() + '&plateform=' +
+              payWay, _payType, payWay);
+    }else {
+      //获取付款url
+      String url = await _orderService.getPayUrl(orderId);
+      dialog = PayWebDialog(url, _payType, payWay);
+    }
+    showDialog(context: context, builder: (_){
+      return dialog;
+    }).then((result)  {
+       _orderService.isPay(orderId).then((httpResult){
+         ///查询付款状态
+         if(httpResult.success){
+           ///付款成功
            Navigator.of(context).popUntil((route)=>route.isFirst);
-         });
-       }
-     });
+           _peyStatus = 1;
+         }else{
+           Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: httpResult.errMsg);
+           if(httpResult.errMsg == '支付未完成'){
+             _peyStatus = 2;
+           }else{
+             _peyStatus = 3;
+           }
+         }
+       }).whenComplete((){setState(() {
+
+       });}).catchError(ExceptionHandler.toastHandler().handException);
+
+    });
+
   }
 
+  String _getButtonText(){
+    if(_peyStatus == 1){
+      return '支付成功，返回';
+    }else if(_peyStatus == 2){
+      return '去支付';
+    }else {
+      return '订单已过期';
+    }
+  }
   ///乘客
   Widget _userPassengerWidget() {
     List<Widget> list = List();

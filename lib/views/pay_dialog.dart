@@ -8,21 +8,36 @@ import 'package:url_launcher/url_launcher.dart';
 ///付款pay webview
 class PayWebDialog extends StatefulWidget{
 
-  final String initialUrl;
+  ///支付
+  final String url;
+
+  ///支付类型，1=浏览器支付，2=直接lunch
+  final int payType;
+
+  ///支付宝or微信
+  final String payPlatform;
 
 
-  PayWebDialog(this.initialUrl);
+  PayWebDialog(this.url, this.payType, this.payPlatform);
 
   @override
   State createState() {
-    return _State(initialUrl);
+    return _State(url, payType, payPlatform);
   }
 }
 
 
 class _State extends State{
 
-  final String initialUrl;
+  ///支付
+  final String url;
+
+  ///支付类型，1=浏览器支付，2=直接lunch
+  final int payType;
+
+  ///alipay or weixin
+  final String payPlatform;
+
 
   String _title = '付款';
 
@@ -30,27 +45,33 @@ class _State extends State{
 
   var webview;
 
-  _State(this.initialUrl){
-    flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged data) {
-      String url = data.url;
-      print(url);
-      if(url.startsWith('alipay') || url.startsWith('tbopen')){
-        _lunch(url);
-      }
-      if(url.indexOf('fontNotify.html') != -1){
+
+  _State(this.url, this.payType, this.payPlatform){
+    if(payType == 1){
+      flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged data) {
+        String url = data.url;
+        print(url);
+        if(url.startsWith('alipay') || url.startsWith('tbopen')){
+          _lunch(url);
+        }
+        if(url.indexOf('fontNotify.html') != -1){
           Navigator.of(context).pop(true);
-      }
-    });
+        }
+      });
+    }else{
+      launch('alipayqr://platformapi/startapp?saId=10000007&qrcode='+Uri.encodeFull(url));
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
-    webview =  WebviewScaffold(
+    webview =  payType==2?Container():WebviewScaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(_title),
       ),
-      url: initialUrl,
+      url: url,
       headers: {
         'cookieStr':Data.cookie,
         'Accept-Language':'zh-CN,zh;q=0.9,en;q=0.8,ja;q=0.7,zh-TW;q=0.6,la;q=0.5',
@@ -71,8 +92,8 @@ class _State extends State{
       type: MaterialType.transparency, //透明类型
       child: Center( //保证控件居中效果
         child: SizedBox(
-          width: 120.0,
-          height: 120.0,
+          width: 250.0,
+          height: 200.0,
           child: Container(
             decoration: ShapeDecoration(
               color: Color(0xffffffff),
@@ -92,8 +113,22 @@ class _State extends State{
                     top: 20.0,
                   ),
                   child: Text(
-                    '付款中，请勿返回...',
-                    style: TextStyle(fontSize: 12.0),
+                    '支付中...，支付成功后请点击确定按钮',
+                    style: TextStyle(fontSize: 14.0),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 20),
+                  alignment: Alignment.center,
+                  child:  MaterialButton(
+                    color: Colors.blue,
+                    textColor: Colors.white,
+                    height: 40,
+                    minWidth: 200,
+                    child: Text('确定'),
+                    onPressed: (){
+                      Navigator.pop(context);
+                    },
                   ),
                 ),
                 Container(
@@ -115,5 +150,6 @@ class _State extends State{
       throw 'Could not launch $url';
     }
   }
+
 
 }

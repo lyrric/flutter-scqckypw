@@ -54,7 +54,7 @@ class ExceptionHandler{
        errMsg = '请求失败';
      }
      if(showErrorType == ShowErrorType.TOAST){
-       Fluttertoast.showToast(msg: errMsg);
+       Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: errMsg);
      }else if(showErrorType == ShowErrorType.MESSAGE_DIALOG){
        showDialog(context: context, builder: (_){
          return new MessageDialog(errMsg);

@@ -205,11 +205,17 @@ class OrderService extends BaseService{
 
 
   ///获取待支付的订单信息
-  Future<List<PayOrderInfo>> getUnPayOrderDetail (int orderId) async {
+  Future<Map> getUnPayOrderDetail (int orderId) async {
+    var map = new Map<String, dynamic>();
     Response response = await dio.get(CHOOSE_PAY_WAY_URL, queryParameters: {
         'pay_order_id':orderId
       });
     var document = parse(response.data);
+    if(document.querySelector('#RadioGroup1_0ccbScanPay') != null){
+      map['type'] =  2;
+    }else{
+      map['type'] =  1;
+    }
     var list = document.querySelectorAll('#rnbox4');
     List<PayOrderInfo> data = new List();
     for(int i=0;i<list.length;i++){
@@ -223,9 +229,40 @@ class OrderService extends BaseService{
       payOrderInfo.idNumber = document.querySelectorAll('#box3 > div.em_lst > ul > li.c3')[i].text.replaceAll('\n', '').replaceAll('\t', '');
       data.add(payOrderInfo);
     }
-    return data;
+    map['data'] = data;
+    return map;
   }
 
+  ///获取支付的url
+  Future<String> getPayUrl (int orderId) async {
+    Response response = await dio.get(PAY_MIDDLE_URL, queryParameters: {
+      'payid':orderId,
+      'plateform':'ccbScanPay',
+    });
+    var html = response.data.toString();
+    if(html.indexOf('车票已过期,请重新购票') != -1){
+      throw new BusinessError('车票已过期,请重新购票');
+    }
+    var start = html.indexOf('text : "');
+    if(start == -1){
+
+    }
+    var end = html.indexOf('"', start+'text : "'.length);
+
+    return html.substring(start+'text : "'.length, end);
+  }
+
+  ///订单是否支付
+  Future<HttpResult> isPay(int payOrderId) async {
+    Response response = await dio.get(ORDER_PAY_CHECK, queryParameters: {
+      'pay_order_id':payOrderId,
+    });
+    var map = json.decode(response.data);
+    var httpResult = new HttpResult();
+    httpResult.success = map['success'];
+    httpResult.errMsg = map['msg'];
+    return httpResult;
+  }
   ///获取待付款订单的数据
 /*  Future<HttpResult> getUnPayOrderDetail (int orderId) async {
     Response response = await dio.get(CHOOSE_PAY_WAY_URL, queryParameters: {

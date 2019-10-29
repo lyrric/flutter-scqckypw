@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/model/order.dart';
 import 'package:flutter_scqckypw/model/page_result.dart';
@@ -143,15 +144,11 @@ class _BodyStat extends State{
     }).then((val){
       if(val != null && val){
         _orderService.cancel(payOrderId).then((httpResult){
-          if(httpResult.success){
             Fluttertoast.showToast(msg: '取消成功');
             setState(() {
               _orders.singleWhere((e)=>e.payOrderId == payOrderId).orderStatus = '订单过期';
             });
-          }else{
-            Fluttertoast.showToast(msg: httpResult.errMsg);
-          }
-        });
+        }).catchError(ExceptionHandler.toastHandler().handException);
       }
     });
   }
