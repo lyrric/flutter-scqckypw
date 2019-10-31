@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/core/exception_handler.dart';
-import 'package:flutter_scqckypw/data/data_status.dart';
+import 'package:flutter_scqckypw/data/request_status.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/model/pay_order_info.dart';

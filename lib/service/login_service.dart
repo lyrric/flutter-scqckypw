@@ -7,6 +7,7 @@ import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/data/sys_constant.dart';
 import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/service/base_service.dart';
+import 'package:flutter_scqckypw/service/user_service.dart';
 
 class LoginService extends BaseService{
 
@@ -41,8 +42,10 @@ class LoginService extends BaseService{
     Map<String, dynamic> map = json.decode(response.data);
     if(map['success']){
       Data.isLogin = true;
+      await UserService().getUser();
     }else{
       throw BusinessError(map['msg']);
     }
+
   }
 }

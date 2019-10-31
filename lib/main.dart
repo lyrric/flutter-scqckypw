@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_scqckypw/core/exception_handler.dart';
+import 'package:flutter_scqckypw/data/data.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
-import 'package:flutter_scqckypw/model/http_result.dart';
 import 'package:flutter_scqckypw/service/common_service.dart';
+import 'package:flutter_scqckypw/service/login_service.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
-import 'package:flutter_scqckypw/views/common_view.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
-import 'package:flutter_scqckypw/views/order_pay.dart';
-import 'package:flutter_scqckypw/views/pay_dialog.dart';
 import 'package:flutter_scqckypw/views/target_city_selector_.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() => runApp(MyApp());
 
@@ -52,6 +51,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,18 +69,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   _MyHomePageState(){
-    _initCookie();
+    _init();
   }
 
-  ///初始化获取jSessionId（cookie）
-  _initCookie(){
-    CommonService().initCookie();
+  _init() async {
+    var map = await Data.getUsernamePwd();
+    if(map != null){
+      ///尝试登陆
+      if(Data.cookie.isEmpty){
+        await CommonService().initCookie();
+      }
+      String code = await CommonService().getCaptchaCode();
+      LoginService().login(map['username'],map['password'], code).then((_){
+        Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: '登陆成功');
+      }).catchError(ExceptionHandler.toastHandler().handException);
+    }else{
+      ///初始化获取jSessionId（cookie）
+      CommonService().initCookie();
+    }
   }
+
 }
 
 class _Body extends StatefulWidget{
-
-
 
   BuildContext _topContext;
 

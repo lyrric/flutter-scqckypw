@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_scqckypw/data/data_status.dart';
+import 'package:flutter_scqckypw/data/request_status.dart';
 import 'package:flutter_scqckypw/model/city_model.dart';
 import 'package:flutter_scqckypw/model/ticket_model.dart';
 import 'package:flutter_scqckypw/service/ticket_service.dart';

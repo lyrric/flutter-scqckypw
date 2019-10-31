@@ -159,11 +159,9 @@ class _UserDrawerHeaderStat extends State<_UserDrawerHeader>{
           Navigator.of(context).push(MaterialPageRoute(builder:(_){
             return LoginView();
           })).then((_){
-            if(Data.isLogin){
-                _userService.getUser().then((_){ setState(() {
+            setState(() {
 
-                });}).catchError(ExceptionHandler.toastHandler().handException);
-            }
+            });
           });
         },
       )

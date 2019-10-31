@@ -1,8 +1,12 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:core';
 
+import 'package:flutter_des/flutter_des.dart';
 import 'package:flutter_scqckypw/model/user_model.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 import '../model/city_model.dart';
 
 class Data{
@@ -43,6 +47,42 @@ class Data{
     isLogin = false;
     cookie = '';
     user = _defaultUser;
+  }
+  ///存储用户名和密码
+  static Future saveUsernamePwd(String username, String password) async {
+    String fileName = '/userInfo';
+    String key = Uuid().v1();
+    String safeUsername = await FlutterDes.encryptToHex(username, key);
+    String safePwd = await FlutterDes.encryptToHex(password, username);
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+    String data = key+','+safeUsername+','+safePwd;
+    var file = await new File(appDocPath+fileName).create(recursive: true);
+    file.writeAsBytesSync(utf8.encode(data));
+  }
+
+  ///读取用户名和密码
+  static Future<Map<String, String>> getUsernamePwd() async {
+    try{
+      String fileName = '/userInfo';
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String appDocPath = appDocDir.path;
+      var file = new File(appDocPath+fileName);
+      if(await file.exists()){
+        String dataStr = utf8.decode(file.readAsBytesSync());
+        List<String> data = dataStr.split(',');
+        String key = data[0];
+        String username = await FlutterDes.decryptFromHex(data[1], key);
+        String password = await FlutterDes.decryptFromHex(data[2], username);
+        var map = Map<String, String>();
+        map['username'] = username;
+        map['password'] = password;
+        return map;
+      }
+    }on Exception catch(e){
+      print(e);
+    }
+    return null;
   }
 }
 

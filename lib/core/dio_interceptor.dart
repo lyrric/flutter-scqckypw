@@ -27,7 +27,7 @@ class DioInterceptor extends InterceptorsWrapper{
       if(cookies != null && cookies.length > 0){
         for(String cookie in cookies){
           if(cookie.startsWith('JSESSIONID') && cookie != Data.cookie){
-            Data.logout();
+            //Data.logout();
             Data.cookie = cookie;
           }
         }

@@ -81,12 +81,14 @@ class _FormSate extends State<_FormView>{
               child: Text('登陆'),
               onPressed: (){
                 login()
-                    .catchError(ExceptionHandler.toastHandler().handException)
                     .then((_){
                         Navigator.of(context).pop(true);
                         Fluttertoast.showToast(
                           msg: '登陆成功',
-                        ); })
+                        );
+                        Data.saveUsernamePwd(_usernameController.text,_passwordController.text);
+                    })
+                    .catchError(ExceptionHandler.toastHandler().handException)
                     .whenComplete((){Navigator.pop(context); });
 
               },
