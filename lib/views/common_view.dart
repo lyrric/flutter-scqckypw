@@ -1,50 +1,78 @@
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data/request_status.dart';
-import 'package:flutter_scqckypw/service/common_service.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 
 ///是否确定框
 class YesNoDialog extends StatelessWidget {
 
   final String title;
+  final String content;
+  final String yesText;
+  final String noText;
 
-  YesNoDialog(this.title);
+  YesNoDialog(this.content, {this.title = '提示', this.yesText = '确定', this.noText = '取消'});
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-        title: Text("提示"),
-        content: Text(title),
-        actions: <Widget>[
-          FlatButton(
-            child: Row(
-              children: <Widget>[
-                Icon(Icons.check, color: Colors.green,),
-                Text('确定')
-              ],
+    return Center(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          border: Border.all(color: Colors.black, width: 1),
+          color: Colors.white
+        ),
+        width: 300,
+        height: 150,
+        child: Column(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
+              child: Text(title, style: TextStyle(fontWeight:  FontWeight.w700, color: Colors.black, fontSize: 20,decoration: TextDecoration.none), ),
             ),
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-          ),
-          FlatButton(
-            child: Row(
-              children: <Widget>[
-                Icon(Icons.cancel, color: Colors.red,),
-                Text(' 取消')
-              ],
+            Container(
+              margin: EdgeInsets.only(top: 10, bottom: 10),
+              child: Text(content, style: TextStyle(fontWeight:  FontWeight.w400, color: Colors.black, fontSize: 18, decoration: TextDecoration.none), ),
             ),
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-          )
-        ]);
+            Divider(height: 10,),
+            Container(
+              height: 45,
+              child:  Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    height: 45,
+                    width: 148,
+                    child:  FlatButton(
+                      child: Text(yesText, style: TextStyle(color: Colors.blue, fontSize: 20)),
+                      onPressed: (){
+                        Navigator.of(context).pop(true);
+                      },
+                    ),
+                  ),
+                  Container(
+                    width: 1, height: 45, color: Color(0xFFF3F3F3),
+                  ),
+                  Container(
+                    height: 45,
+                    width: 148,
+                    child:  FlatButton(
+                      child: Text(noText, style: TextStyle(color: Colors.blue, fontSize: 20)),
+                      onPressed: (){
+                        Navigator.of(context).pop(false);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            )
+
+          ],
+        ),
+      ),
+    );
   }
 }
-
 ///公共方法
 Widget PreWidget(RequestStatus status, Function retryMethod){
   if(status == RequestStatus.LOADING){

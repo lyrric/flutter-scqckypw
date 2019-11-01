@@ -8,6 +8,7 @@ import 'package:flutter_scqckypw/service/common_service.dart';
 import 'package:flutter_scqckypw/service/login_service.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
+import 'package:flutter_scqckypw/views/common_view.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
 import 'package:flutter_scqckypw/views/target_city_selector_.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
@@ -214,9 +215,6 @@ class _BodyState extends State<_Body>{
                   minWidth: 350,
                   child: Text('查询'),
                   onPressed: (){
-                   /* showDialog(context: context, builder: (_){
-                      return PayWebDialog('', 2, '');
-                    });*/
                     Navigator.of(_topContext).push(MaterialPageRoute(builder: (_){
                       return TicketListView(_fromCity, _targetCity, _getDateString());
                     }));

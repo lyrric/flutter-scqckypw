@@ -140,7 +140,7 @@ class _BodyStat extends State{
   ///取消订单
   void _onCancel(int payOrderId){
     showDialog(context: context,builder: (_){
-      return new YesNoDialog('确定取消吗？');
+      return new YesNoDialog('确定取消订单吗？', noText: '返回',);
     }).then((val){
       if(val != null && val){
         _orderService.cancel(payOrderId).then((httpResult){
