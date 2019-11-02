@@ -1,5 +1,6 @@
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_scqckypw/data/data.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -36,7 +37,7 @@ class DioInterceptor extends InterceptorsWrapper{
       if(data is String){
         if(data.startsWith('<script type="text/javascript">parent.location.href')){
           Data.logout();
-          Fluttertoast.showToast(msg: '登录过期，请重新登陆');
+          Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: '登录过期，请重新登陆');
         }
       }
       return response;

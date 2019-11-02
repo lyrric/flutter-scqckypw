@@ -42,8 +42,8 @@ class _FormSate extends State<_FormView>{
 
   final _formKey = GlobalKey<_FormSate>();
 
-  TextEditingController _usernameController = TextEditingController(text: '0');
-  TextEditingController _passwordController = TextEditingController(text: '0');
+  TextEditingController _usernameController = TextEditingController(text: '');
+  TextEditingController _passwordController = TextEditingController(text: '');
 
 
   @override
@@ -59,6 +59,7 @@ class _FormSate extends State<_FormView>{
               icon: Icon(Icons.person),
               hintText: '请输入用户名',
               labelText: '用户名',
+              contentPadding: EdgeInsets.only(top: 10, bottom: 5),
             ),
           ),
           TextFormField(
@@ -68,6 +69,7 @@ class _FormSate extends State<_FormView>{
               icon: Icon(Icons.vpn_key),
               hintText: '请输入密码',
               labelText: '密码',
+              contentPadding: EdgeInsets.only(top: 10, bottom: 5),
             ),
           ),
           Container(
@@ -84,6 +86,7 @@ class _FormSate extends State<_FormView>{
                     .then((_){
                         Navigator.of(context).pop(true);
                         Fluttertoast.showToast(
+                          backgroundColor: Colors.black, textColor: Colors.white,
                           msg: '登陆成功',
                         );
                         Data.saveUsernamePwd(_usernameController.text,_passwordController.text);

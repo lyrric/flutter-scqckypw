@@ -166,7 +166,7 @@ class _PassengerAddState extends State{
                 _passenger.realName = _nameCtrl.text;
                 _passenger.idNumber = _idNoCtrl.text;
                 _passengerService.add(_passenger).then((_){
-                      Fluttertoast.showToast(msg: '保存成功').then((_){
+                      Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: '保存成功').then((_){
                         Navigator.of(context).pop(true);
                       });})
                     .catchError(ExceptionHandler.toastHandler().handException)

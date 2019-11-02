@@ -205,7 +205,7 @@ class _RefundStat extends State{
                     });
                     orderService.refund(openId, ticketId, applyId)
                       .then((_){
-                          Fluttertoast.showToast(msg: '退款成功').then((_){
+                          Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: '退款成功').then((_){
                             Navigator.of(context).pop(true);
                           });
                        })

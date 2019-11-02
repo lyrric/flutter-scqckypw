@@ -185,7 +185,7 @@ class _BodyState extends State<_Body>{
                 });
                 _userService.updateInfo(_realName, _sex, _idType, _idNo)
                     .then((_){
-                          Fluttertoast.showToast(msg: '保存成功');
+                          Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: '保存成功');
                           Navigator.of(context).pop(true); })
                     .catchError(ExceptionHandler.toastHandler().handException)
                     .whenComplete((){

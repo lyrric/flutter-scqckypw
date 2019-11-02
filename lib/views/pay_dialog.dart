@@ -32,10 +32,10 @@ class _State extends State{
   ///支付
   final String url;
 
-  ///支付类型，1=浏览器支付，2=直接lunch
+  ///支付类型，1=浏览器支付，2=直接launch
   final int payType;
 
-  ///alipay or weixin
+  ///alipay
   final String payPlatform;
 
 
@@ -51,15 +51,15 @@ class _State extends State{
       flutterWebviewPlugin.onStateChanged.listen((WebViewStateChanged data) {
         String url = data.url;
         print(url);
-        if(url.startsWith('alipay') || url.startsWith('tbopen')){
-          _lunch(url);
+        if(url.startsWith('alipay')){
+          launch(url);
         }
         if(url.indexOf('fontNotify.html') != -1){
           Navigator.of(context).pop(true);
         }
       });
     }else{
-      launch('alipayqr://platformapi/startapp?saId=10000007&qrcode='+Uri.encodeFull(url));
+        launch('alipayqr://platformapi/startapp?saId=10000007&qrcode='+Uri.encodeFull(url));
     }
   }
 
@@ -141,14 +141,6 @@ class _State extends State{
         ),
       ),
     );
-  }
-
-  Future _lunch(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    }else{
-      throw 'Could not launch $url';
-    }
   }
 
 

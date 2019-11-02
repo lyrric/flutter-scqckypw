@@ -8,7 +8,6 @@ import 'package:flutter_scqckypw/service/common_service.dart';
 import 'package:flutter_scqckypw/service/login_service.dart';
 import 'package:flutter_scqckypw/service/order_service.dart';
 import 'package:flutter_scqckypw/views/city_selector.dart';
-import 'package:flutter_scqckypw/views/common_view.dart';
 import 'package:flutter_scqckypw/views/home_drawer.dart';
 import 'package:flutter_scqckypw/views/target_city_selector_.dart';
 import 'package:flutter_scqckypw/views/ticket_list.dart';
@@ -99,6 +98,7 @@ class _Body extends StatefulWidget{
   _Body(this._topContext);
 
   OrderService orderService = OrderService();
+
   @override
   State createState() {
     return _BodyState(_topContext);

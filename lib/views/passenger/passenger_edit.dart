@@ -173,7 +173,7 @@ class _PassengerEditState extends State{
                 _passenger.idNumber = _idNoCtrl.text;
                 _passengerService.update(_passenger)
                     .then((_){
-                      Fluttertoast.showToast(msg:'保存成功');
+                      Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg:'保存成功');
                       Navigator.pop(context);})
                     .catchError(ExceptionHandler.toastHandler().handException)
                     .whenComplete((){ Navigator.of(context).pop(true); });},

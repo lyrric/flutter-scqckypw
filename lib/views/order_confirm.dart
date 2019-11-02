@@ -43,8 +43,8 @@ class _Body extends State<TicketOrderConfirm> {
   var orderService = OrderService();
 
   var _ticketService = TicketService();
-  var _contactNameCtrl = TextEditingController(text: '张三');
-  var _contactPhoneCtrl = TextEditingController(text: '158025466112');
+  var _contactNameCtrl = TextEditingController(text: '');
+  var _contactPhoneCtrl = TextEditingController(text: '');
 
   _Body(this._tickerMode){
     _initToken();
@@ -56,7 +56,7 @@ class _Body extends State<TicketOrderConfirm> {
     PassengerService().getPassengers(1).then((data) {
       _userPassengers = data;
     }).catchError((error){
-      Fluttertoast.showToast(msg: '加载乘车人失败');
+      Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: '加载乘车人失败');
     }).whenComplete((){
       if(mounted){
         setState(() {});
@@ -169,6 +169,17 @@ class _Body extends State<TicketOrderConfirm> {
   }
 
   _goToPay(){
+    if(_contactNameCtrl.text.isEmpty){
+      Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: '请填写联系人');
+      return ;
+    } if(_contactNameCtrl.text.isEmpty){
+      Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: '请填写联系人电话');
+      return ;
+    }
+    if(_selectedPassengers.length == 0){
+      Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: '请至少选择一个乘客');
+      return ;
+    }
     //正确
     showDialog(context: context, builder: (_){
       return LoadingDialog(text:'创建订单中，请勿返回');

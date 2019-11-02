@@ -144,7 +144,7 @@ class _BodyStat extends State{
     }).then((val){
       if(val != null && val){
         _orderService.cancel(payOrderId).then((httpResult){
-            Fluttertoast.showToast(msg: '取消成功');
+            Fluttertoast.showToast(backgroundColor: Colors.black, textColor: Colors.white, msg: '取消成功');
             setState(() {
               _orders.singleWhere((e)=>e.payOrderId == payOrderId).orderStatus = '订单过期';
             });
