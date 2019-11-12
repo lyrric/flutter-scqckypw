@@ -112,8 +112,8 @@ class _UserCenterState extends State<UserCenter>{
   }
 
   String dealIdNo(String idNo){
-    if(idNo == '未添加'){
-      return idNo;
+    if(idNo == '未添加' || idNo == ''){
+      return '-';
     }else{
       return idNo.substring(0, 4) + '***';
     }
